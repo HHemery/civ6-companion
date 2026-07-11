@@ -96,6 +96,35 @@ body {
 }
 #search::placeholder { color: #5b6478; }
 
+.me-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 10px;
+}
+.me-wrap label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.me-wrap select {
+  flex: 1;
+  padding: 7px 10px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+.me-wrap select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.18);
+}
+
 nav { overflow-y: auto; flex: 1; padding: 4px 10px 20px; }
 
 .nav-group-title {

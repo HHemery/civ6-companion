@@ -346,6 +346,54 @@ const CIV_DATA = [
       "Négliger l'armée : en guerre, n'importe quelle unité militaire supprime tes apôtres d'un clic."
     ],
     notes: "Fiche tirée du guide Herson « religious victory in multiplayer » (BBG, lobby 12 joueurs CPL, victoire T90). Stratégie popularisée par le joueur **Al sign**, multi-vainqueur en lobbies compétitifs."
+  },
+
+  {
+    id: "pachacuti",
+    leader: "Pachacuti",
+    civilization: "Inca",
+    contexte: "FFA",
+    owner: "nuage",
+    img: "img/pachacuti.webp",
+    couleur: "#fbbf24",
+    bonus: [
+      "**Mit'a (capacité civ)** : tes citoyens peuvent **travailler les cases de montagne** (+2 prod, +1 food par culture en terrasses adjacente) — les chaînes de montagnes deviennent des tuiles d'usine que personne d'autre ne peut exploiter.",
+      "**Pachacuti (leader)** : les routes commerciales **intérieures** gagnent **+1 nourriture par montagne dans la ville d'origine**.",
+      "**Culture en terrasses** (amélioration unique, sur collines) : +1 food, logement, **+1 food par montagne adjacente**, **+2 prod si adjacente à un aqueduc** (+1 si eau douce sans aqueduc). Dispo très tôt, scale avec les arbres tech/civique.",
+      "**Qhapaq Ñan** (amélioration du leader) : un **tunnel-portail à travers les chaînes de montagnes** (2 PM pour traverser), impossible à piller ou à supprimer.",
+      "**Warak'aq** (unité unique médiévale, remplace l'escarmoucheur) : **deux attaques par tour** (retouché en BBG 7.x)."
+    ],
+    pantheon: "Pas de préférence forte (aucun passif de foi — la vidéo écarte d'ailleurs l'ouverture lieu saint). Génériques sûrs : **Religious Settlements** ou **City Patron Goddess** ; Fertility Rites/Déesse de la chasse selon le land.",
+    victoire: "**Science.** Grosses populations (terrasses + montagnes travaillées) → beaucoup de science/culture par citoyen, campus +2/+3 gratuits contre les montagnes, et une **défense naturelle** qui décourage tout rush : l'Inca sim tranquille derrière ses pics. S-tier FFA en BBG 7.4 (cf. tier list).",
+    early_game: [
+      "**Settle CONTRE les montagnes** — tout le kit en dépend. Le spawn inca est biaisé montagnes avec BBM.",
+      "Scouts d'abord (la vidéo part full scouts ×4 — en multi BBG, **2 suffisent**), puis colons.",
+      "**Repère dès T1 la case d'aqueduc** (adjacente city center + montagne/lac) : logement max + le +2 prod des futures terrasses adjacentes.",
+      "**Campus collé aux montagnes** (+2/+3 faciles) — premier district à poser discount.",
+      "**Routes internes vers la capitale-montagnes** dès Commerce à l'étranger : chaque montagne de la ville d'origine = +1 food par route. **Magnus** dessus, comme un opener commercial classique.",
+      "**Pingala tôt** : chaque citoyen ≈ science + culture, et l'Inca fait les plus grosses pops du jeu."
+    ],
+    mid_game: [
+      "Féodalité → vague de builders : **terrasses sur les collines adjacentes aux montagnes/aqueducs** (elles nourrissent AUSSI les montagnes travaillées : +1 food chacune) ; **mines sur les collines isolées** — la terrasse sans montagne ni aqueduc adjacent n'est qu'une ferme chère.",
+      "**Zone industrielle entre deux aqueducs** comme toujours — l'Inca a des aqueducs partout, profite.",
+      "Les villes montent à 15-20+ pop sans effort : surveille **logement** (aqueducs, terrasses) et **aménités** (Colisée, luxes — la leçon Cree s'applique au double ici).",
+      "**Qhapaq Ñan** sur tes chaînes de montagnes : rotation défensive instantanée d'un flanc à l'autre.",
+      "Campus/commercial partout, puis le plan science standard du guide (universités, Free Inquiry, grants)."
+    ],
+    late_game: [
+      "Science classique : labs, Oxford, spaceports — la grosse pop et la prod des montagnes font le reste.",
+      "En défense, l'Inca est le pire adversaire à rush du jeu : murs + pics + tunnels internes. Quelques Warak'aq/unités à distance suffisent longtemps.",
+      "La source (vidéo tuto vs IA) finit sur la course spatiale — le plan tient tel quel en multi, en plus rapide."
+    ],
+    snowball: "Montagnes travaillées (+2 prod) + terrasses (+food qui nourrit les montagnes) + routes internes (+1 food/montagne) = **des pops géantes ET de la prod là où les autres civs n'ont rien** → science/culture par citoyen (Pingala) → et personne n'ose t'attaquer derrière tes pics. L'Inca convertit la géographie en snowball.",
+    pieges: [
+      "Settle loin des montagnes : le kit entier disparaît — mieux vaut un spot montagneux moyen qu'une belle plaine.",
+      "Poser des terrasses sans montagne ni aqueduc adjacent (ferme chère) — ou miner une colline qui aurait nourri deux montagnes travaillées.",
+      "⚠ Les **tunnels sont utilisables par l'ennemi** en guerre : un Qhapaq Ñan mal placé est une autoroute d'invasion vers ta capitale (la vidéo le pointe).",
+      "Sur-investir en scouts (×4 dans la vidéo) : réflexe solo, 2 suffisent en BBG sans barbares.",
+      "Laisser la pop exploser sans aménités : -10 % sur tout, le piège classique des civs à food."
+    ],
+    notes: "**Fiche pour Nuage** ☁️ — source : vidéo tuto FR de la sortie Gathering Storm (~2019-2020, vs IA Empereur, pré-BBG). Les fondamentaux (terrasses, montagnes, campus, routes internes) sont intemporels ; les valeurs exactes et le build compétitif sont recalés sur la méta BBG 7.4 de ce site (guides early/mid game valables tels quels)."
   }
 ];
 
@@ -1257,7 +1305,8 @@ const GUIDE_DATA = [
    ========================================================================== */
 
 const PERSONNES = [
-  { id: "hugo", nom: "Hugo", emoji: "👑" }
+  { id: "hugo", nom: "Hugo", emoji: "👑" },
+  { id: "nuage", nom: "Nuage", emoji: "☁️" }
 ];
 
 /* ==========================================================================
@@ -1483,7 +1532,7 @@ function renderHome() {
       </div>
     </div>`).join("");
 
-  const persSections = PERSONNES.map(p => {
+  const persSections = personnesVisibles().map(p => {
     const civs = CIV_DATA.filter(c => (c.owner || PERSONNES[0].id) === p.id);
     if (civs.length === 0) return "";
     const cards = civs.map(c => {
@@ -1521,6 +1570,17 @@ function renderHome() {
 
 const GUIDE_IDS_META = ["tier-list", "guide-tips", "guide-review", "tracker"];
 
+/* Sélecteur « je suis » — persistant par navigateur */
+const ME_KEY = "civ6_moi";
+function getMe() { try { return localStorage.getItem(ME_KEY) || "tous"; } catch (e) { return "tous"; } }
+function setMe(v) { try { localStorage.setItem(ME_KEY, v); } catch (e) { /* file:// ok */ } }
+function personnesVisibles() {
+  const me = getMe();
+  if (me === "tous") return PERSONNES;
+  const found = PERSONNES.filter(p => p.id === me);
+  return found.length ? found : PERSONNES;
+}
+
 function civToNavItem(c) {
   return { id: c.id, label: `${c.leader} — ${c.civilization}`, sub: c.contexte, img: c.img, couleur: c.couleur };
 }
@@ -1532,7 +1592,7 @@ function navEntries() {
     { group: "🏆 Méta", items: GUIDE_DATA.filter(g => GUIDE_IDS_META.includes(g.id))
         .map(g => ({ id: g.id, label: g.titre, sub: g.sousTitre, icon: g.icon || "🏆" })) }
   ];
-  for (const p of PERSONNES) {
+  for (const p of personnesVisibles()) {
     const civs = CIV_DATA.filter(c => (c.owner || PERSONNES[0].id) === p.id);
     const ffa = civs.filter(c => !c.contexte.toLowerCase().startsWith("teamer"));
     const tm = civs.filter(c => c.contexte.toLowerCase().startsWith("teamer"));
@@ -1585,6 +1645,19 @@ function select(id) {
 
 $search.addEventListener("input", () => renderNav($search.value));
 document.querySelector(".sidebar-header h1").addEventListener("click", () => select(""));
+
+const $me = document.getElementById("me-select");
+if ($me) {
+  $me.innerHTML = `<option value="tous">Tout le monde</option>`
+    + PERSONNES.map(p => `<option value="${p.id}">${p.emoji} ${p.nom}</option>`).join("");
+  $me.value = getMe();
+  if ($me.value !== getMe()) $me.value = "tous";
+  $me.addEventListener("change", () => {
+    setMe($me.value);
+    renderNav($search.value);
+    if (!activeId) renderHome();
+  });
+}
 
 const initial = location.hash.replace("#", "");
 if (initial && (CIV_DATA.some(c => c.id === initial) || GUIDE_DATA.some(g => g.id === initial))) {
