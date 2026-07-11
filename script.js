@@ -357,10 +357,10 @@ const CIV_DATA = [
     img: "img/hammurabi.webp",
     couleur: "#818cf8",
     bonus: [
-      "**Enūma Anu Enlil** : les **eurekas complètent (presque toute) la tech** au lieu de 40 %, contre un gros malus de science par tour — tu ne « recherches » plus, tu **joues les eurekas comme arbre de recherche**. Le consensus n°1 de la tier list vient de là.",
-      "**Bonus BBG clé (les deux vidéos tournent autour)** : chaque type de district construit pour la **première fois** offre **gratuitement le bâtiment le moins cher du district** — sanctuaire gratuit avec le 1er lieu saint, phare avec le 1er port, arène avec le 1er complexe de loisirs… et surtout **le Bosquet gratuit avec la 1re Réserve** (le bâtiment le plus cher/rentable du lot : tempo énorme).",
-      "**Palgum** (bâtiment unique, remplace le moulin, débloqué à **Irrigation**) : +prod, et **+1 nourriture sur toutes les tuiles d'eau douce AMÉLIORÉES** de la ville → oriente le settle (rivières) et chaque pose d'amélioration.",
-      "**Sabum Kibittum** (unité unique, dispo T1) : 3 PM, grosse vision — mais Lege le juge inférieur au scout (plus cher, pas de promos de mouvement)."
+      "**Enuma Anu Enlil (capacité civ — REWORK BBG, source : data de Paul)** : **achever une bibliothèque octroie un Eurêka.** Fini le « eurekas complètent les techs » du jeu de base : ta science avance NORMALEMENT, et chaque bibliothèque terminée ajoute un boost gratuit par-dessus. **Les bibliothèques sont ton moteur.** Bias de spawn : rivières (T3).",
+      "**Ninu ilu sirum (capacité leader)** : chaque quartier spécialisé (sauf place de gouvernance) achevé pour la **première fois** dans l'empire y construit **gratuitement le bâtiment le moins cher** — sanctuaire avec le 1er lieu saint, phare avec le 1er port… et surtout **le Bosquet gratuit avec la 1re Réserve** (le bâtiment le plus cher du lot : tempo énorme, le cœur du build de Herson).",
+      "**Palgum** (bâtiment unique, remplace le moulin, débloqué à **Irrigation**) : +2 prod ; **+1 nourriture sur les cases aménagées d'eau douce (SAUF les fermes)** ; **+1 production pour les fermes** → oriente le settle (rivières) et chaque amélioration.",
+      "**Sâbum kibittum** (unité unique antique, dispo T1) : vision 3, **+17 contre la cavalerie lourde ET légère** — l'assurance anti-rush chevaux de l'early. (En scouting pur, Lege préfère le scout : moins cher, promos de mouvement.)"
     ],
     pantheon: [
       "**Religious Settlements** (le pick de Lege) : les tuiles gratuites aident à **poser les districts discount** au bon endroit.",
@@ -368,7 +368,7 @@ const CIV_DATA = [
       "⚠ Grâce au **sanctuaire gratuit** du 1er lieu saint, tu as ton panthéon **sans God King** : slot éco direct sur **Urban Planning**.",
       "Religion optionnelle : Herson l'a fondée avec **Zen Meditation** parce qu'il avait **La Valette** en suzeraineté (achats de bâtiments à la foi) — sinon la foi part en builders/Monumentality."
     ],
-    victoire: "**Science** — mais par un chemin unique : les eurekas font l'arbre de techs, les discounts font l'infrastructure. Herson à T46 : « impossibly large », villes à 12-14 pop, +5/+6 aménités. Perma-ban dans beaucoup de lobbies : profite tant qu'on te le laisse.",
+    victoire: "**Science** — par un chemin unique : les **bibliothèques crachent des eurekas gratuits**, les premiers districts offrent leurs bâtiments, les discounts font le reste. Herson à T46 : « impossibly large », villes à 12-14 pop, +5/+6 aménités. Perma-ban dans beaucoup de lobbies : profite tant qu'on te le laisse.",
     early_game: [
       "**Settle pour le Palgum** : rivière/eau douce avec un max de tuiles améliorables adjacentes (Lege décale sa capitale pour ça). Les jardins suspendus sont un bon BO sur land riche en rivières (Lege).",
       "**Ouverture 2 lieux saints** (Herson) : le 1er donne le **sanctuaire gratuit** → panthéon rapide sans God King → **Urban Planning direct**.",
@@ -378,6 +378,7 @@ const CIV_DATA = [
       "Expansion **wide agressive** : « je dois settle une tonne de villes ou je gâche mes stats » (Herson). Religious Settlements + colons en continu."
     ],
     mid_game: [
+      "**Bibliothèque dans chaque campus, ASAP** : chaque bibliothèque achevée = un Eurêka gratuit (des centaines de science). C'est TA version du « 1 tech par tour » — les campus discount servent d'abord à ça.",
       "**Féodalité : achète tes builders** (or + foi via Monumentality) plutôt que de les produire — tes villes sont occupées à poser les districts discount.",
       "Chops et améliorations **près de l'eau douce d'abord** (chaque amélioration fresh water = +1 food via Palgum — Herson chope même une forêt pour la remplacer par une mine « for the Palgum yields »).",
       "**Colisée** sécurisé au chop (~T45 chez Herson) ; viser +5/+6 aménités partout — les grosses pops le demandent.",
@@ -386,14 +387,15 @@ const CIV_DATA = [
       "Ensuite le plan science standard du site (universités, grants, Oxford) — en sachant que tes eurekas te mettent naturellement des techs d'avance."
     ],
     late_game: [
-      "Le plan science générique s'applique (labs, spaceports) — Babylone y arrive plus tôt que tout le monde grâce aux eurekas.",
-      "Ta science PAR TOUR reste médiocre (le malus) : ce sont les eurekas qui avancent l'arbre → continue de **chasser chaque eureka** comme un objectif de production (unités, bâtiments, quêtes).",
+      "Le plan science générique s'applique (labs, spaceports) — Babylone y arrive plus tôt que tout le monde grâce aux bibliothèques.",
+      "Continue de chasser les **eurekas classiques** en plus de ceux des bibliothèques (unités, quêtes, bâtiments) : ils s'empilent, et l'overflow de science se gère comme dans le guide mid game.",
       "Attention à la fenêtre militaire : ton avance de techs = unités d'une ère d'avance, mais ta production doit suivre — les pré-builds à upgrader sont encore plus rentables chez toi."
     ],
-    snowball: "Eurekas = techs gratuites + premières constructions = bâtiments gratuits + discounts = districts au prix plancher → **Babylone paie tout moins cher que le lobby** (recherche, infra, bâtiments) → l'avance se compose : perma-ban mérité. Le pilotage se fait à la checklist d'eurekas, pas à la science par tour.",
+    snowball: "Bibliothèques = **eurekas gratuits qui s'ajoutent à une science normale** + premières constructions = bâtiments gratuits + discounts = districts au prix plancher → **Babylone paie tout moins cher que le lobby** (recherche, infra, bâtiments) → l'avance se compose : perma-ban mérité.",
     pieges: [
       "Poser un 2e exemplaire d'un district avant d'avoir « ouvert » tous les types : tu brûles un bâtiment gratuit et un discount.",
-      "Débloquer des techs par gourmandise : chaque tech complétée renchérit les districts — laisse les eurekas décider du rythme.",
+      "**Laisser l'avance de techs dépasser ta production** : débloquer ≠ construire. Chaque palier débloqué (usines, unités…) doit être CONVERTI (bâtiments, upgrades, pré-builds) — sinon ton eureka ne vaut rien et tu « bloques » (vécu de Hugo).",
+      "Compléter des techs par gourmandise pendant l'early : chaque tech renchérit les districts → **pose tes districts AVANT les rafales d'eurekas** (bibliothèques comprises : retarde-les de 2-3 tours si une pose est imminente).",
       "Oublier que le build est **exigeant en micro** (Herson lui-même : « je galère à décider vite ») : en ligne avec timer, prépare tes poses à l'avance.",
       "Settle loin de l'eau douce = Palgum mort. Rivières d'abord, toujours.",
       "Rester étroit : Babylone sans wide gâche son kit — les stats viennent du nombre de villes discountées."
@@ -966,7 +968,7 @@ const GUIDE_DATA = [
         blocs: [
           { tiers: [
             { label: "S+", color: "#f0b232", items: [
-              { nom: "Babylone — Hammurabi", note: "Consensus n°1 depuis sa sortie : les eurekas complètent les techs, snowball science inégalé. Perma-ban dans beaucoup de lobbies." }
+              { nom: "Babylone — Hammurabi", note: "Consensus n°1 : bibliothèques = eurekas gratuits (rework BBG) + bâtiment offert au 1er district de chaque type — il paie tout moins cher que le lobby. Perma-ban fréquent.", mine: true }
             ]},
             { label: "S", color: "#e8556d", items: [
               { nom: "Corée — Seondeok", note: "Seowon = science plate massive, build simple, consistance maximale." },
