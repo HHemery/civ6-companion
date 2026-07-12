@@ -251,7 +251,7 @@ const CIV_DATA = [
       "Oublier de récupérer sa carte politique dès que possible.",
       "Build order exigeant, déconseillé aux débutants."
     ],
-    notes: "Fiche calée sur **BBG 5.9** — les valeurs peuvent bouger avec les patchs BBG (tu joues en 7.4.6 : vérifie les chiffres de visibilité diplomatique en partie)."
+    notes: "Fiche calée sur **BBG 5.9** — les valeurs peuvent bouger avec les patchs BBG (tu joues en 7.5 : vérifie les chiffres de visibilité diplomatique en partie)."
   },
 
   {
@@ -947,14 +947,14 @@ const GUIDE_DATA = [
 
   {
     id: "tier-list",
-    titre: "Tier list BBG 7.4.6",
+    titre: "Tier list BBG 7.5",
     sousTitre: "FFA & Teamer — estimation croisée, tes civs surlignées en or",
     icon: "🏆",
     sections: [
       {
         titre: "Méthodologie (à lire avant de râler)",
         blocs: [
-          { p: "Il n'existe **aucune tier list officielle publiée pour BBG 7.4.6**. Celle-ci croise quatre sources : la tier list communautaire BBG (TierMaker, 27 listes agrégées), le classement multi de Herson (BBG 6.0), les **changelogs officiels 7.x** (civ6bbg.github.io) et la méta CPL. Fiabilité : bonne sur les extrêmes (S+/S et bas de tableau), discutable au milieu — comme toutes les tier lists." },
+          { p: "Il n'existe **aucune tier list officielle publiée pour BBG 7.5**. Celle-ci croise quatre sources : la tier list communautaire BBG (TierMaker, 27 listes agrégées), le classement multi de Herson (BBG 6.0), les **changelogs officiels 7.x** (civ6bbg.github.io) et la méta CPL. Le classement a été établi sur les patchs 7.4.x et reporté en 7.5 (pas de refonte majeure des tiers dans le changelog 7.5) — **à recaler au prochain patch**. Fiabilité : bonne sur les extrêmes (S+/S et bas de tableau), discutable au milieu — comme toutes les tier lists." },
           { ul: [
             "Changements 7.4 qui pèsent sur le classement : **victoire culturelle buffée** (merveilles 5 tourisme de base, seuil touristes 150, Computers +50%) → les civs culture montent ; **nerfs navals** (Embolon, Line of Battle) → les civs navales baissent ; **+1 aménité de base hors capitale** → le wide est plus facile pour tout le monde.",
             "Contexte : FFA 10 joueurs Pangaea online speed. En teamer, le classement change du tout au tout (le rôle war/sim prime).",
@@ -1709,9 +1709,9 @@ function renderHome() {
 
   $content.innerHTML = `
     <div class="home">
-      <h2>Civ VI Companion</h2>
+      <h2>Civ Sheet</h2>
       <p class="intro">Mémo compétitif à garder à côté du jeu : guide général (réglages, early/mid/late,
-      la boucle des gros rendements), tier list BBG 7.4.6, bilan des vidéos de tips, et l'espace de chaque
+      la boucle des gros rendements), tier list BBG 7.5, bilan des vidéos de tips, et l'espace de chaque
       joueur avec ses civs. Tout est calé sur le multi BBG en online speed.</p>
       <div class="home-section-title">Guides & méta — pour tout le monde</div>
       <div class="home-grid">${guideCards}</div>
@@ -1781,6 +1781,35 @@ function navEntries() {
 
 let activeId = null;
 
+/* Index de recherche global : toutes les entités BBG (leaders + éléments de
+   catégorie), pour que la barre de recherche de la sidebar les retrouve
+   directement (sinon elle ne filtre que les titres de catégories). */
+let BBG_SEARCH_INDEX = null;
+function bbgSearchIndex() {
+  if (BBG_SEARCH_INDEX) return BBG_SEARCH_INDEX;
+  const list = [];
+  (window.BBG_LEADERS || []).forEach(l => {
+    const names = (l.entries || []).map(e => e.name).join(" ");
+    list.push({
+      label: l.title, sub: "Leader", icon: "👑", img: l.image || "",
+      hay: bbgTermNorm(l.title + " " + names), kind: "leader", id: l.id
+    });
+  });
+  (window.BBG_CATEGORIES || []).forEach(cat => {
+    (cat.items || []).forEach(it => {
+      list.push({
+        label: it.name,
+        sub: cat.label + (it.section ? " · " + it.section : ""),
+        icon: cat.icon || "•", img: it.image || "",
+        hay: bbgTermNorm(it.name + " " + (it.section || "") + " " + (it.tags || []).join(" ")),
+        kind: "cat", catKey: cat.key, id: it.id
+      });
+    });
+  });
+  BBG_SEARCH_INDEX = list;
+  return list;
+}
+
 function renderNav(filter) {
   const f = (filter || "").trim().toLowerCase();
   let html = "";
@@ -1800,10 +1829,43 @@ function renderNav(filter) {
       </button>`;
     }
   }
+
+  /* Résultats dans l'encyclopédie BBG (leaders + éléments) — deep-link direct. */
+  renderNav._hits = null;
+  if (f && f.length >= 2 && bbgHasData()) {
+    const q = bbgTermNorm(f);
+    const hits = q ? bbgSearchIndex().filter(x => x.hay.indexOf(q) !== -1) : [];
+    if (hits.length) {
+      any = true;
+      const shown = hits.slice(0, 30);
+      renderNav._hits = shown;
+      html += `<div class="nav-group-title">🔎 Encyclopédie BBG (${hits.length})</div>`;
+      shown.forEach((x, i) => {
+        const visual = x.img
+          ? `<img class="nav-avatar" src="${escAttr(x.img)}" alt="" onerror="this.style.display='none'" style="--nav-accent:#3a4157">`
+          : `<span class="nav-icon">${x.icon}</span>`;
+        html += `<button class="nav-item nav-bbg-hit" data-si="${i}">
+          ${visual}<span class="nav-label">${escBbg(x.label)}<span class="nav-sub">${escBbg(x.sub)}</span></span>
+        </button>`;
+      });
+      if (hits.length > shown.length) {
+        html += `<div class="nav-more">+${hits.length - shown.length} autres — précise ta recherche</div>`;
+      }
+    }
+  }
+
   if (!any) html = `<div class="nav-empty">Aucun résultat.</div>`;
   $nav.innerHTML = html;
-  $nav.querySelectorAll(".nav-item").forEach(el => {
+  $nav.querySelectorAll(".nav-item[data-id]").forEach(el => {
     el.addEventListener("click", () => select(el.dataset.id));
+  });
+  $nav.querySelectorAll(".nav-bbg-hit").forEach(el => {
+    el.addEventListener("click", () => {
+      const x = (renderNav._hits || [])[+el.dataset.si];
+      if (!x) return;
+      if (x.kind === "leader") openBbgLeader(x.id);
+      else openBbgItem(x.catKey, { id: x.id });
+    });
   });
 }
 

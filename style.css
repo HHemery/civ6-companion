@@ -200,6 +200,12 @@ nav { overflow-y: auto; flex: 1; padding: 4px 10px 20px; }
   font-size: 0.85rem;
   font-style: italic;
 }
+.nav-more {
+  padding: 6px 10px 2px;
+  color: var(--text-muted);
+  font-size: 0.76rem;
+  font-style: italic;
+}
 
 /* ---------------- Contenu principal ---------------- */
 

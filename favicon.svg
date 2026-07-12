@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0b0d13"/>
+  <rect width="64" height="64" rx="14" fill="none" stroke="#4f7cff" stroke-opacity="0.35" stroke-width="2"/>
+  <!-- feuille (sheet) avec coin plié -->
+  <path d="M17 12h20l11 11v27a3 3 0 0 1-3 3H17a3 3 0 0 1-3-3V15a3 3 0 0 1 3-3z" fill="#e8b64c"/>
+  <path d="M37 12l11 11H40a3 3 0 0 1-3-3z" fill="#b7862f"/>
+  <!-- lignes de contenu -->
+  <rect x="21" y="30" width="22" height="3.4" rx="1.7" fill="#0b0d13" fill-opacity="0.78"/>
+  <rect x="21" y="38" width="22" height="3.4" rx="1.7" fill="#0b0d13" fill-opacity="0.78"/>
+  <!-- accent bleu (étoile "civ main") -->
+  <rect x="21" y="46" width="13" height="3.4" rx="1.7" fill="#4f7cff"/>
+</svg>
