@@ -1365,6 +1365,51 @@ const PERSONNES = [
 ];
 
 /* ==========================================================================
+   PROFILS — modèle unifié des joueurs (enrichit PERSONNES avec couleur +
+   « civs main »). Source : data/profils.js (window.PROFILS). Édition live via
+   le Backoffice, stockée en brouillon localStorage, puis exportée pour commit.
+   Chaque profil : { id, nom, emoji, couleur, mains:[ids window.BBG_LEADERS] }.
+   ========================================================================== */
+
+const PROFILS_KEY = "civ6_profils_draft";
+
+function profilNormalize(p) {
+  return {
+    id: p.id, nom: p.nom || "Sans nom", emoji: p.emoji || "🙂",
+    couleur: p.couleur || "#4f7cff",
+    mains: Array.isArray(p.mains) ? p.mains.slice() : []
+  };
+}
+function profilsSeed() {
+  const base = (Array.isArray(window.PROFILS) && window.PROFILS.length)
+    ? window.PROFILS
+    : PERSONNES.map(p => ({ id: p.id, nom: p.nom, emoji: p.emoji }));
+  return base.map(profilNormalize);
+}
+function profilsLoadDraft() {
+  try {
+    const d = JSON.parse(localStorage.getItem(PROFILS_KEY));
+    return Array.isArray(d) ? d.map(profilNormalize) : null;
+  } catch (e) { return null; }
+}
+function profilsSaveDraft() {
+  try { localStorage.setItem(PROFILS_KEY, JSON.stringify(PROFILS_STATE)); }
+  catch (e) { /* file:// ok */ }
+}
+let PROFILS_STATE = profilsLoadDraft() || profilsSeed();
+function people() { return PROFILS_STATE; }
+function defaultOwner() { return (PROFILS_STATE[0] && PROFILS_STATE[0].id) || "hugo"; }
+
+/* Lookup id -> leader BBG, pour afficher les civs main d'un profil. */
+function bbgLeaderMap() {
+  if (!bbgLeaderMap._m) {
+    bbgLeaderMap._m = {};
+    (window.BBG_LEADERS || []).forEach(l => { bbgLeaderMap._m[l.id] = l; });
+  }
+  return bbgLeaderMap._m;
+}
+
+/* ==========================================================================
    RENDU — générique : boucle sur les données, rien de codé en dur par civ.
    ========================================================================== */
 
@@ -1375,11 +1420,56 @@ const $scroll = document.querySelector(".content-wrap");
 
 function scrollTop() { if ($scroll) $scroll.scrollTop = 0; }
 
-/* Échappe le HTML puis applique **gras** */
+/* Échappe le HTML puis applique **gras**. Si le terme en gras correspond
+   exactement à une entité BBG (unité/merveille/doctrine/gouverneur…), il
+   devient un lien cliquable vers la page data correspondante. */
 function fmt(s) {
   return String(s)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    .replace(/\*\*(.+?)\*\*/g, (m, inner) => bbgTermLink(inner) || `<strong>${inner}</strong>`);
+}
+
+/* ---- Liens « termes » : **terme** des fiches/guides -> page data BBG ---- */
+
+let BBG_TERM_INDEX = null;
+function bbgTermNorm(s) {
+  return String(s)
+    .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+function bbgTermIndex() {
+  if (BBG_TERM_INDEX) return BBG_TERM_INDEX;
+  const idx = {};
+  const add = (name, target) => {
+    const k = bbgTermNorm(name);
+    if (k && k.length > 2 && !idx[k]) idx[k] = target;
+  };
+  (window.BBG_CATEGORIES || []).forEach(cat => {
+    (cat.items || []).forEach(it => add(it.name, { kind: "cat", catKey: cat.key, id: it.id }));
+    if (cat.sectionImages) Object.keys(cat.sectionImages).forEach(sec => add(sec, { kind: "cat", catKey: cat.key, section: sec }));
+  });
+  (window.BBG_LEADERS || []).forEach(l => {
+    (l.entries || []).forEach(e => { if (/unique/i.test(e.type)) add(e.name, { kind: "leader", id: l.id }); });
+  });
+  BBG_TERM_INDEX = idx;
+  return idx;
+}
+function bbgTermLink(inner) {
+  const t = bbgTermIndex()[bbgTermNorm(inner)];
+  if (!t) return null;
+  const attr = t.kind === "leader"
+    ? `data-tleader="${escAttr(t.id)}"`
+    : `data-tcat="${escAttr(t.catKey)}" ${t.section ? `data-tsec="${escAttr(t.section)}"` : `data-tid="${escAttr(t.id)}"`}`;
+  return `<strong class="dlink" ${attr} title="Voir dans l'encyclopédie BBG">${inner}</strong>`;
+}
+function openBbgItem(catKey, opts) {
+  const cat = (window.BBG_CATEGORIES || []).find(c => c.key === catKey);
+  if (!cat) return;
+  activeId = "bbg-" + catKey;
+  renderBbgCategory(cat, opts || {});
+  renderNav($search.value);
+  try { history.replaceState(null, "", "#bbg-" + catKey); } catch (e) { /* file:// ok */ }
 }
 
 function renderField(value) {
@@ -1587,9 +1677,11 @@ function renderHome() {
       </div>
     </div>`).join("");
 
+  const lmap = bbgLeaderMap();
   const persSections = personnesVisibles().map(p => {
-    const civs = CIV_DATA.filter(c => (c.owner || PERSONNES[0].id) === p.id);
-    if (civs.length === 0) return "";
+    const civs = CIV_DATA.filter(c => (c.owner || defaultOwner()) === p.id);
+    const mains = (p.mains || []).map(id => lmap[id]).filter(Boolean);
+    if (civs.length === 0 && mains.length === 0) return "";
     const cards = civs.map(c => {
       const ctx = c.contexte.toLowerCase().startsWith("teamer") ? "Teamer" : "FFA";
       return `
@@ -1601,8 +1693,18 @@ function renderHome() {
         </div>
       </div>`;
     }).join("");
-    return `<div class="home-section-title">${p.emoji} Les civs de ${fmt(p.nom)}</div>
-      <div class="home-grid">${cards}</div>`;
+    const mainsRow = mains.length ? `
+      <div class="home-mains-title">★ Civs main</div>
+      <div class="home-mains">${mains.map(l => `
+        <span class="home-main" data-leader="${l.id}" title="${fmt(l.title)}">
+          ${l.image ? `<img src="${l.image}" alt="">` : `<span class="hm-emoji">👑</span>`}
+          <span>${fmt(l.title)}</span>
+        </span>`).join("")}</div>` : "";
+    const fichesRow = civs.length ? `
+      <div class="home-mains-title">Fiches stratégie</div>
+      <div class="home-grid">${cards}</div>` : "";
+    return `<div class="home-section-title" style="--hc-accent:${p.couleur || "#e8b64c"}">${p.emoji} ${fmt(p.nom)}</div>
+      ${mainsRow}${fichesRow}`;
   }).join("");
 
   $content.innerHTML = `
@@ -1616,7 +1718,10 @@ function renderHome() {
       ${persSections}
     </div>`;
   $content.querySelectorAll(".home-card").forEach(el => {
-    el.addEventListener("click", () => select(el.dataset.id));
+    el.addEventListener("click", (ev) => { if (ev.target.closest(".dlink")) return; select(el.dataset.id); });
+  });
+  $content.querySelectorAll(".home-main").forEach(el => {
+    el.addEventListener("click", (ev) => { if (ev.target.closest(".dlink")) return; openBbgLeader(el.dataset.leader); });
   });
   scrollTop();
 }
@@ -1631,9 +1736,10 @@ function getMe() { try { return localStorage.getItem(ME_KEY) || "tous"; } catch 
 function setMe(v) { try { localStorage.setItem(ME_KEY, v); } catch (e) { /* file:// ok */ } }
 function personnesVisibles() {
   const me = getMe();
-  if (me === "tous") return PERSONNES;
-  const found = PERSONNES.filter(p => p.id === me);
-  return found.length ? found : PERSONNES;
+  const all = people();
+  if (me === "tous") return all;
+  const found = all.filter(p => p.id === me);
+  return found.length ? found : all;
 }
 
 function civToNavItem(c) {
@@ -1647,8 +1753,24 @@ function navEntries() {
     { group: "🏆 Méta", items: GUIDE_DATA.filter(g => GUIDE_IDS_META.includes(g.id))
         .map(g => ({ id: g.id, label: g.titre, sub: g.sousTitre, icon: g.icon || "🏆" })) }
   ];
+  entries[1].items.push({ id: "backoffice", label: "Backoffice — profils", sub: "Gérer les profils & civs main", icon: "🛠️" });
+  if (bbgHasData()) {
+    const bbgItems = [];
+    if (window.BBG_LEADERS) {
+      bbgItems.push({ id: "bbg-leaders", label: "Leaders", sub: window.BBG_LEADERS.length + " leaders", icon: "👑" });
+    }
+    (window.BBG_CATEGORIES || []).forEach(c => {
+      bbgItems.push({ id: "bbg-" + c.key, label: c.label, sub: c.items.length + " éléments", icon: c.icon });
+    });
+    entries.push({ group: `🎲 Encyclopédie BBG ${window.BBG_VERSION || ""}`, items: bbgItems });
+  }
+  if (window.BBG_REFERENCE) {
+    entries.push({ group: "📚 Références BBG", items: [
+      { id: "bbg-reference", label: "Références", sub: window.BBG_REFERENCE.length + " tableaux", icon: "📊" }
+    ] });
+  }
   for (const p of personnesVisibles()) {
-    const civs = CIV_DATA.filter(c => (c.owner || PERSONNES[0].id) === p.id);
+    const civs = CIV_DATA.filter(c => (c.owner || defaultOwner()) === p.id);
     const ffa = civs.filter(c => !c.contexte.toLowerCase().startsWith("teamer"));
     const tm = civs.filter(c => c.contexte.toLowerCase().startsWith("teamer"));
     if (ffa.length) entries.push({ group: `${p.emoji} ${p.nom} — FFA`, items: ffa.map(civToNavItem) });
@@ -1691,9 +1813,475 @@ function select(id) {
   const page = GUIDE_DATA.find(g => g.id === id);
   if (civ) renderCiv(civ);
   else if (page) renderGuide(page);
+  else if (id === "backoffice") renderBackoffice();
+  else if (id && id.indexOf("bbg-") === 0) renderBbg(id);
   else { activeId = null; renderHome(); }
   renderNav($search.value);
   try { history.replaceState(null, "", "#" + (activeId || "")); } catch (e) { /* file:// ok */ }
+}
+
+/* ---- Encyclopédie BBG (données générées : window.BBG_LEADERS / BBG_CATEGORIES) ----
+   Données scrapées depuis civ6bbg.github.io par tools/build-bbg-data.mjs.
+   Rendu en JS pur (portage des vues React de PaulCuquemelle/civ). */
+
+function escBbg(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/\n/g, "<br>");
+}
+function escAttr(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
+const BBG_TYPE_META = {
+  "Capacité de civilisation": { color: "#e8b64c", icon: "🏛️" },
+  "Capacité de leader":       { color: "#8b5cf6", icon: "👑" },
+  "Unité unique":             { color: "#ef4444", icon: "⚔️" },
+  "Bâtiment unique":          { color: "#4f7cff", icon: "🏛" },
+  "Quartier unique":          { color: "#4ade80", icon: "🏘️" },
+  "Amélioration unique":      { color: "#fb923c", icon: "🛠️" },
+  "Autre":                    { color: "#94a3b8", icon: "•" }
+};
+
+function bbgHasData() { return !!(window.BBG_LEADERS || window.BBG_CATEGORIES); }
+
+function bbgHeader(title, sub) {
+  return `
+    <div class="fiche-header"><div>
+      <h2>${escBbg(title)}</h2>
+      <span class="badge bbg">Encyclopédie BBG</span>
+    </div></div>
+    <p class="fiche-sub">${escBbg(sub)}</p>
+    <div class="bbg-toolbar">
+      <input type="text" class="bbg-filter" placeholder="Filtrer dans cette page…" autocomplete="off">
+    </div>`;
+}
+
+function bbgPlanList(title, items) {
+  if (!items || !items.length) return "";
+  return `<div class="bbg-plan-block">
+    <h5 class="bbg-plan-bt">${escBbg(title)}</h5>
+    <ul class="bbg-plan-list">${items.map(i => `<li>${escBbg(i)}</li>`).join("")}</ul>
+  </div>`;
+}
+
+function bbgPlanHtml(l) {
+  const strat = (window.BBG_STRATEGIES || {})[l.id];
+  if (!strat) return "";
+  const vmeta = window.BBG_VICTORY_META || {};
+  const chips = (strat.victoryTypes || []).map(v => {
+    const m = vmeta[v] || { icon: "🎯", color: "var(--gold)" };
+    return `<span class="bbg-vchip" style="color:${m.color};border-color:${m.color}">${m.icon} ${escBbg(v)}</span>`;
+  }).join("");
+  return `<div class="bbg-plan">
+    <div class="bbg-plan-head">
+      <span class="bbg-plan-title">📋 Plan de partie</span>
+      ${strat.draft ? `<span class="bbg-plan-draft">à vérifier</span>` : ""}
+    </div>
+    ${chips ? `<div class="bbg-vchips">${chips}</div>` : ""}
+    <p class="bbg-plan-sum">${escBbg(strat.summary)}</p>
+    ${bbgPlanList("Points forts", strat.strengths)}
+    ${bbgPlanList("À prioriser", strat.priorities)}
+    ${bbgPlanList("Doctrines clés", strat.policies)}
+    ${bbgPlanList("Conseils", strat.tips)}
+  </div>`;
+}
+
+function bbgLeaderCard(l) {
+  const strat = (window.BBG_STRATEGIES || {})[l.id];
+  const names = l.entries.map(e => e.name).join(" · ");
+  const search = (l.title + " " + l.entries.map(e => e.name + " " + e.description).join(" ")
+    + (strat ? " " + strat.summary : "")).toLowerCase();
+  const entriesHtml = l.entries.map(e => {
+    const m = BBG_TYPE_META[e.type] || BBG_TYPE_META["Autre"];
+    return `<div class="bbg-entry">
+      <div class="bbg-entry-head">
+        ${e.icon ? `<img class="bbg-entry-icon" src="${escAttr(e.icon)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+        <span class="bbg-etype" style="color:${m.color};border-color:${m.color}">${m.icon} ${escBbg(e.type)}</span>
+      </div>
+      <h4 class="bbg-entry-name">${escBbg(e.name)}</h4>
+      <p class="bbg-entry-desc">${escBbg(e.description)}</p>
+    </div>`;
+  }).join("");
+  return `<details class="bbg-leader" data-lid="${escAttr(l.id)}" data-search="${escAttr(search)}">
+    <summary class="bbg-leader-sum">
+      ${l.image ? `<img class="bbg-leader-img" src="${escAttr(l.image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+      <span class="bbg-leader-title">${escBbg(l.title)}</span>
+      ${strat ? `<span class="bbg-plan-badge" title="Plan de partie">📋</span>` : ""}
+      <span class="bbg-count">${l.entries.length}</span>
+    </summary>
+    <div class="bbg-entries">
+      <p class="bbg-leader-names">${escBbg(names)}</p>
+      ${bbgPlanHtml(l)}
+      ${entriesHtml}
+    </div>
+  </details>`;
+}
+
+function bbgItemCard(it) {
+  const search = (it.name + " " + (it.section || "") + " " + it.description + " " + (it.tags || []).join(" ")).toLowerCase();
+  const stats = (it.stats && it.stats.length)
+    ? `<div class="bbg-stats">${it.stats.map(s => `<div class="bbg-stat"><span class="bbg-stat-v">${escBbg(s.value)}</span><span class="bbg-stat-l">${escBbg(s.label)}</span></div>`).join("")}</div>`
+    : "";
+  const tags = (it.tags && it.tags.length)
+    ? `<div class="bbg-tags">${it.tags.map(t => `<span class="bbg-tag">${escBbg(t)}</span>`).join("")}</div>`
+    : "";
+  return `<article class="bbg-card" data-id="${escAttr(it.id)}" data-search="${escAttr(search)}">
+    <div class="bbg-card-head">
+      ${it.image ? `<img class="bbg-card-icon" src="${escAttr(it.image)}" alt="" loading="lazy" onerror="this.style.display='none'">` : ""}
+      <h4 class="bbg-card-name">${escBbg(it.name)}</h4>
+    </div>
+    ${stats}${tags}
+    ${it.description ? `<p class="bbg-card-desc">${escBbg(it.description)}</p>` : ""}
+  </article>`;
+}
+
+function bbgGroupBySection(items) {
+  const groups = [];
+  const idx = {};
+  for (const it of items) {
+    const sec = it.section || "";
+    if (!(sec in idx)) { idx[sec] = groups.length; groups.push({ section: sec, items: [] }); }
+    groups[idx[sec]].items.push(it);
+  }
+  return groups;
+}
+
+function wireBbgFilter() {
+  const input = $content.querySelector(".bbg-filter");
+  if (!input) return;
+  const cards = Array.prototype.slice.call($content.querySelectorAll("[data-search]"));
+  const groups = Array.prototype.slice.call($content.querySelectorAll(".bbg-group"));
+  input.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    for (const c of cards) {
+      const hit = !q || c.getAttribute("data-search").indexOf(q) !== -1;
+      c.style.display = hit ? "" : "none";
+      if (hit && q && c.tagName === "DETAILS") c.open = true;
+    }
+    for (const g of groups) {
+      let vis = false;
+      const gc = g.querySelectorAll("[data-search]");
+      for (let i = 0; i < gc.length; i++) if (gc[i].style.display !== "none") { vis = true; break; }
+      g.style.display = vis ? "" : "none";
+    }
+  });
+}
+
+function renderBbgLeaders(focusId) {
+  const list = window.BBG_LEADERS || [];
+  const nEntries = list.reduce((n, l) => n + l.entries.length, 0);
+  let html = bbgHeader("👑 Leaders", `${list.length} leaders · ${nEntries} capacités, unités & infrastructures · BBG ${window.BBG_VERSION || ""}`);
+  html += `<div class="bbg-list">${list.map(bbgLeaderCard).join("")}</div>`;
+  $content.innerHTML = html;
+  wireBbgFilter();
+  if (focusId) {
+    const el = $content.querySelector(`[data-lid="${cssEsc(focusId)}"]`);
+    if (el) {
+      el.open = true;
+      el.classList.add("bbg-focus");
+      try { el.scrollIntoView({ block: "center" }); } catch (e) { /* ok */ }
+      return;
+    }
+  }
+  scrollTop();
+}
+
+/* Échappe une valeur pour un sélecteur d'attribut CSS. */
+function cssEsc(s) { return String(s).replace(/["\\]/g, "\\$&"); }
+
+/* Ouvre l'onglet Leaders BBG et déplie la fiche demandée (depuis les civs main). */
+function openBbgLeader(leaderId) {
+  if (!bbgHasData()) return;
+  activeId = "bbg-leaders";
+  renderBbgLeaders(leaderId);
+  renderNav($search.value);
+  try { history.replaceState(null, "", "#bbg-leaders"); } catch (e) { /* file:// ok */ }
+}
+
+function renderBbgCategory(cat, focus) {
+  let html = bbgHeader(`${cat.icon} ${cat.label}`, `${cat.items.length} éléments · BBG ${window.BBG_VERSION || ""}`);
+  for (const g of bbgGroupBySection(cat.items)) {
+    const secImg = cat.sectionImages && g.section ? cat.sectionImages[g.section] : null;
+    const secHead = g.section
+      ? `<h3 class="bbg-section">${secImg ? `<img class="bbg-section-img" src="${escAttr(secImg)}" alt="" onerror="this.style.display='none'">` : ""}${escBbg(g.section)} <span class="bbg-section-n">${g.items.length}</span></h3>`
+      : "";
+    html += `<section class="bbg-group" data-sec="${escAttr(g.section || "")}">${secHead}<div class="bbg-cards">${g.items.map(bbgItemCard).join("")}</div></section>`;
+  }
+  $content.innerHTML = html;
+  wireBbgFilter();
+  if (focus && (focus.id || focus.section)) {
+    const sel = focus.id ? `[data-id="${cssEsc(focus.id)}"]` : `.bbg-group[data-sec="${cssEsc(focus.section)}"]`;
+    const el = $content.querySelector(sel);
+    if (el) {
+      el.classList.add("bbg-focus");
+      try { el.scrollIntoView({ block: "center" }); } catch (e) { /* ok */ }
+      return;
+    }
+  }
+  scrollTop();
+}
+
+function renderBbg(id) {
+  if (id === "bbg-leaders") { renderBbgLeaders(); return; }
+  if (id === "bbg-reference") { renderBbgReference(); return; }
+  const cat = (window.BBG_CATEGORIES || []).find(c => "bbg-" + c.key === id);
+  if (cat) { renderBbgCategory(cat); return; }
+  activeId = null; renderHome();
+}
+
+/* ---- Références BBG (contenu manuel porté de PaulCuquemelle/civ) ----
+   Note : les guides d'Hugo (GUIDE_DATA) restent la source unique de guides ;
+   les guides BBG de Paul ne sont pas intégrés (choix éditorial). */
+
+/* Chips de catégorie (filtre) + câblage combiné texte + catégorie. */
+function bbgCatChips(cats) {
+  return `<div class="bbg-chips">
+    <span class="bbg-chip-label">Catégorie</span>
+    <button class="bbg-chip" data-cat="Tous" data-active="1">Tous</button>
+    ${cats.map(c => `<button class="bbg-chip" data-cat="${escAttr(c)}">${escBbg(c)}</button>`).join("")}
+  </div>`;
+}
+function wireBbgCatFilter() {
+  const input = $content.querySelector(".bbg-filter");
+  const chips = Array.prototype.slice.call($content.querySelectorAll(".bbg-chip"));
+  const cards = Array.prototype.slice.call($content.querySelectorAll("[data-search]"));
+  let activeCat = "Tous";
+  function apply() {
+    const q = input ? input.value.trim().toLowerCase() : "";
+    for (const c of cards) {
+      const okCat = activeCat === "Tous" || c.getAttribute("data-cat") === activeCat;
+      const okQ = !q || c.getAttribute("data-search").indexOf(q) !== -1;
+      const hit = okCat && okQ;
+      c.style.display = hit ? "" : "none";
+      if (hit && q && c.tagName === "DETAILS") c.open = true;
+    }
+  }
+  if (input) input.addEventListener("input", apply);
+  chips.forEach(ch => ch.addEventListener("click", () => {
+    activeCat = ch.getAttribute("data-cat");
+    chips.forEach(x => x.removeAttribute("data-active"));
+    ch.setAttribute("data-active", "1");
+    apply();
+  }));
+}
+
+/* Liens « Données BBG → » d'un guide/tableau vers un onglet encyclopédie. */
+function bbgSeeAlso(seeAlso) {
+  if (!seeAlso || !seeAlso.length) return "";
+  return `<div class="bbg-seealso">
+    <span class="bbg-seealso-label">Données BBG :</span>
+    ${seeAlso.map(s => `<button class="bbg-seealso-btn" data-tab="bbg-${escAttr(s.tab)}">${escBbg(s.label)} →</button>`).join("")}
+  </div>`;
+}
+function wireBbgSeeAlso() {
+  $content.querySelectorAll(".bbg-seealso-btn").forEach(el => {
+    el.addEventListener("click", () => select(el.dataset.tab));
+  });
+}
+
+function renderBbgReference() {
+  const tables = window.BBG_REFERENCE || [];
+  const cats = window.BBG_REF_CATEGORIES || [];
+  const cards = tables.map(t => {
+    const search = (t.title + " " + (t.note || "") + " " + t.columns.join(" ") + " " + t.rows.map(r => r.join(" ")).join(" ")).toLowerCase();
+    return `<div class="bbg-ref" data-cat="${escAttr(t.category)}" data-search="${escAttr(search)}">
+      <div class="bbg-ref-head">
+        <span class="bbg-ref-icon">${escBbg(t.icon || "📊")}</span>
+        <h3 class="bbg-ref-title">${escBbg(t.title)}${t.draft ? ` <span class="bbg-plan-draft">à vérifier</span>` : ""}</h3>
+        <span class="bbg-guide-cat">${escBbg(t.category)}</span>
+      </div>
+      ${t.note ? `<p class="bbg-ref-note">${escBbg(t.note)}</p>` : ""}
+      <div class="table-wrap"><table>
+        <thead><tr>${t.columns.map(c => `<th>${escBbg(c)}</th>`).join("")}</tr></thead>
+        <tbody>${t.rows.map(r => `<tr>${r.map(c => `<td>${escBbg(c)}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table></div>
+      ${bbgSeeAlso(t.seeAlso)}
+    </div>`;
+  }).join("");
+  $content.innerHTML = bbgHeader("📊 Références BBG", `${tables.length} tableaux exploitables en jeu · adjacences, combat, coûts, terrain, différences BBG…`)
+    + bbgCatChips(cats)
+    + `<div class="bbg-reflist">${cards}</div>`;
+  wireBbgCatFilter();
+  wireBbgSeeAlso();
+  scrollTop();
+}
+
+/* ---- Backoffice : profils & civs main (édition -> export data/profils.js) ---- */
+
+function boUid() {
+  return "p" + Date.now().toString(36) + Math.floor(Math.random() * 1296).toString(36);
+}
+
+function renderBackoffice() {
+  $content.innerHTML = `
+    <div class="fiche-header"><div>
+      <h2>🛠️ Backoffice — profils</h2>
+      <span class="badge guide">Méta</span>
+    </div></div>
+    <p class="fiche-sub">Gère les profils des joueurs et leurs <strong>civs main</strong>. Les modifs sont
+    gardées en brouillon dans <em>ce</em> navigateur ; clique <strong>Exporter</strong> pour générer
+    <code>data/profils.js</code> à committer (c'est ce fichier qui est partagé par tout le monde).</p>
+    <div class="bo-actions">
+      <button class="bo-btn" id="bo-add">＋ Ajouter un profil</button>
+      <button class="bo-btn primary" id="bo-export">💾 Exporter data/profils.js</button>
+      <button class="bo-btn ghost" id="bo-reset">↺ Réinitialiser depuis le fichier</button>
+    </div>
+    <div id="bo-list"></div>
+    <div class="bo-export-out" id="bo-export-out" hidden>
+      <div class="bo-export-head">
+        <strong>data/profils.js</strong>
+        <a class="bo-btn" id="bo-download" download="profils.js">⬇ Télécharger</a>
+      </div>
+      <p class="bo-export-tip">Remplace le contenu de <code>data/profils.js</code> par ceci, puis
+      <code>git commit</code>. Les autres verront les profils au prochain déploiement.</p>
+      <textarea class="bo-export-text" id="bo-export-text" readonly spellcheck="false"></textarea>
+    </div>`;
+  boBindGlobal();
+  boBindList();
+  boRenderList();
+  scrollTop();
+}
+
+function boBindGlobal() {
+  const add = $content.querySelector("#bo-add");
+  if (add) add.addEventListener("click", () => {
+    PROFILS_STATE.push(profilNormalize({ id: boUid(), nom: "Nouveau joueur", emoji: "🙂", couleur: "#4f7cff", mains: [] }));
+    profilsSaveDraft(); boRenderList(); renderMeSelect();
+  });
+  const reset = $content.querySelector("#bo-reset");
+  if (reset) reset.addEventListener("click", () => {
+    if (!confirm("Réinitialiser depuis data/profils.js ? Les modifs non exportées seront perdues.")) return;
+    try { localStorage.removeItem(PROFILS_KEY); } catch (e) { /* ok */ }
+    PROFILS_STATE = profilsSeed();
+    profilsSaveDraft(); boRenderList(); renderMeSelect();
+    const out = $content.querySelector("#bo-export-out"); if (out) out.hidden = true;
+  });
+  const exp = $content.querySelector("#bo-export");
+  if (exp) exp.addEventListener("click", boExport);
+}
+
+function boExport() {
+  const body = JSON.stringify(PROFILS_STATE, null, 2);
+  const text = `"use strict";
+// Profils des joueurs + leurs civs main.
+// Généré par le Backoffice de l'app — modifiable à la main, mais l'app réécrit ce format.
+// mains = ids de window.BBG_LEADERS (data/bbg-leaders.js).
+window.PROFILS = ${body};
+`;
+  const out = $content.querySelector("#bo-export-out");
+  const ta = $content.querySelector("#bo-export-text");
+  const dl = $content.querySelector("#bo-download");
+  ta.value = text;
+  out.hidden = false;
+  try {
+    const blob = new Blob([text], { type: "text/javascript" });
+    if (boExport._url) URL.revokeObjectURL(boExport._url);
+    boExport._url = URL.createObjectURL(blob);
+    dl.href = boExport._url;
+    dl.style.display = "";
+  } catch (e) { dl.style.display = "none"; }
+  ta.focus(); ta.select();
+  try { out.scrollIntoView({ behavior: "smooth", block: "nearest" }); } catch (e) { /* ok */ }
+}
+
+function boRenderList() {
+  const list = $content.querySelector("#bo-list");
+  if (!list) return;
+  if (PROFILS_STATE.length === 0) {
+    list.innerHTML = `<p class="bo-empty">Aucun profil. Clique « ＋ Ajouter un profil ».</p>`;
+    return;
+  }
+  const map = bbgLeaderMap();
+  list.innerHTML = PROFILS_STATE.map(p => {
+    const mains = (p.mains || []).map(id => ({ id, l: map[id] }));
+    const chips = mains.map(m => `
+      <span class="bo-chip">
+        ${m.l && m.l.image ? `<img src="${escAttr(m.l.image)}" alt="" onerror="this.style.display='none'">` : ""}
+        <span>${fmt(m.l ? m.l.title : m.id)}</span>
+        <button class="bo-chip-x" data-mid="${escAttr(m.id)}" title="Retirer">×</button>
+      </span>`).join("");
+    const col = /^#[0-9a-f]{6}$/i.test(p.couleur) ? p.couleur : "#4f7cff";
+    return `<div class="bo-profile" data-pid="${escAttr(p.id)}" style="--bo-accent:${col}">
+      <div class="bo-prow">
+        <input class="bo-emoji" data-f="emoji" value="${escAttr(p.emoji)}" maxlength="4" aria-label="Emoji">
+        <input class="bo-nom" data-f="nom" value="${escAttr(p.nom)}" placeholder="Nom du joueur" aria-label="Nom">
+        <input class="bo-col" data-f="couleur" type="color" value="${col}" aria-label="Couleur">
+        <span class="bo-pid">#${escBbg(p.id)}</span>
+        <button class="bo-del" title="Supprimer ce profil">🗑</button>
+      </div>
+      <div class="bo-mains">
+        <div class="bo-mains-title">★ Civs main <span class="bo-mains-n">${mains.length}</span></div>
+        <div class="bo-chips">${chips || `<span class="bo-none">aucune pour l'instant</span>`}</div>
+        <div class="bo-addmain">
+          <input class="bo-search" placeholder="Ajouter une civ main (chercher un leader BBG)…" autocomplete="off">
+          <div class="bo-results" hidden></div>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function boProfileOf(el) {
+  const prof = el.closest ? el.closest(".bo-profile") : null;
+  if (!prof) return null;
+  return PROFILS_STATE.find(x => x.id === prof.dataset.pid) || null;
+}
+
+function boShowResults(searchEl, p) {
+  const prof = searchEl.closest(".bo-profile");
+  const box = prof.querySelector(".bo-results");
+  if (!box) return;
+  const q = (searchEl.value || "").trim().toLowerCase();
+  if (!q) { box.hidden = true; box.innerHTML = ""; return; }
+  const have = new Set(p.mains || []);
+  const res = (window.BBG_LEADERS || [])
+    .filter(l => !have.has(l.id) && l.title.toLowerCase().includes(q))
+    .slice(0, 40);
+  box.innerHTML = res.length
+    ? res.map(l => `<button class="bo-res" data-mid="${escAttr(l.id)}">
+        ${l.image ? `<img src="${escAttr(l.image)}" alt="" onerror="this.style.display='none'">` : ""}
+        <span>${fmt(l.title)}</span></button>`).join("")
+    : `<div class="bo-res-empty">Aucune civ.</div>`;
+  box.hidden = false;
+}
+
+function boBindList() {
+  const list = $content.querySelector("#bo-list");
+  if (!list) return;
+  list.addEventListener("input", (ev) => {
+    const t = ev.target;
+    const p = boProfileOf(t);
+    if (!p) return;
+    if (t.classList.contains("bo-search")) { boShowResults(t, p); return; }
+    const f = t.dataset.f;
+    if (f) { p[f] = t.value; profilsSaveDraft(); renderMeSelect(); }
+  });
+  list.addEventListener("click", (ev) => {
+    const t = ev.target;
+    const p = boProfileOf(t);
+    if (!p) return;
+    if (t.classList.contains("bo-del")) {
+      if (!confirm(`Supprimer le profil « ${p.nom} » ?`)) return;
+      PROFILS_STATE = PROFILS_STATE.filter(x => x.id !== p.id);
+      profilsSaveDraft(); boRenderList(); renderMeSelect();
+      return;
+    }
+    if (t.classList.contains("bo-chip-x")) {
+      p.mains = (p.mains || []).filter(id => id !== t.dataset.mid);
+      profilsSaveDraft(); boRenderList(); renderMeSelect();
+      return;
+    }
+    const res = t.closest ? t.closest(".bo-res") : null;
+    if (res) {
+      const mid = res.dataset.mid;
+      if (!(p.mains || []).includes(mid)) p.mains.push(mid);
+      profilsSaveDraft(); boRenderList(); renderMeSelect();
+      return;
+    }
+  });
 }
 
 /* ---- Init ---- */
@@ -1701,12 +2289,26 @@ function select(id) {
 $search.addEventListener("input", () => renderNav($search.value));
 document.querySelector(".sidebar-header h1").addEventListener("click", () => select(""));
 
+/* Liens « termes » : délégation globale sur la zone de contenu. */
+$content.addEventListener("click", (ev) => {
+  const el = ev.target.closest ? ev.target.closest(".dlink") : null;
+  if (!el) return;
+  ev.stopPropagation();
+  if (el.dataset.tleader) openBbgLeader(el.dataset.tleader);
+  else if (el.dataset.tcat) openBbgItem(el.dataset.tcat, el.dataset.tsec ? { section: el.dataset.tsec } : { id: el.dataset.tid });
+});
+
+function renderMeSelect() {
+  const $me = document.getElementById("me-select");
+  if (!$me) return;
+  $me.innerHTML = `<option value="tous">Tout le monde</option>`
+    + people().map(p => `<option value="${p.id}">${p.emoji} ${fmt(p.nom)}</option>`).join("");
+  $me.value = people().some(p => p.id === getMe()) ? getMe() : "tous";
+}
+
 const $me = document.getElementById("me-select");
 if ($me) {
-  $me.innerHTML = `<option value="tous">Tout le monde</option>`
-    + PERSONNES.map(p => `<option value="${p.id}">${p.emoji} ${p.nom}</option>`).join("");
-  $me.value = getMe();
-  if ($me.value !== getMe()) $me.value = "tous";
+  renderMeSelect();
   $me.addEventListener("change", () => {
     setMe($me.value);
     renderNav($search.value);
@@ -1715,7 +2317,7 @@ if ($me) {
 }
 
 const initial = location.hash.replace("#", "");
-if (initial && (CIV_DATA.some(c => c.id === initial) || GUIDE_DATA.some(g => g.id === initial))) {
+if (initial && (CIV_DATA.some(c => c.id === initial) || GUIDE_DATA.some(g => g.id === initial) || initial === "backoffice" || (initial.indexOf("bbg-") === 0 && bbgHasData()))) {
   select(initial);
 } else {
   renderNav("");
