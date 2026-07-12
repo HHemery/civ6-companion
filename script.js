@@ -1510,11 +1510,32 @@ function renderCiv(civ) {
     html += `<div class="note-box"><strong>⚠ Note :</strong> ${fmt(civ.notes)}</div>`;
   }
 
+  /* Colonne principale : toutes les sections SAUF « bonus » (qui va dans le
+     panneau repliable à droite). */
+  let main = "";
   for (const sec of CIV_SECTIONS) {
+    if (sec.key === "bonus") continue;
     const val = civ[sec.key];
     if (!val || (Array.isArray(val) && val.length === 0)) continue;
-    html += `<div class="section ${sec.cls || ""}"><h3>${sec.label}</h3>${renderField(val)}</div>`;
+    main += `<div class="section ${sec.cls || ""}"><h3>${sec.label}</h3>${renderField(val)}</div>`;
   }
+
+  /* Panneau « Bonus de la civ » : <details> collant à droite, ouvrable/fermable. */
+  let aside = "";
+  const bonus = civ.bonus;
+  if (bonus && (!Array.isArray(bonus) || bonus.length)) {
+    aside = `<aside class="civ-aside">
+      <details class="civ-bonus" open>
+        <summary><span class="cb-icon">✨</span> Bonus de la civ <span class="cb-hint">replier / déplier</span></summary>
+        <div class="civ-bonus-body">${renderField(bonus)}</div>
+      </details>
+    </aside>`;
+  }
+
+  html += `<div class="fiche-body" style="--civ-accent:${accent}">
+      <div class="fiche-main">${main}</div>
+      ${aside}
+    </div>`;
   $content.innerHTML = html;
   scrollTop();
 }
