@@ -1450,13 +1450,36 @@ function bbgTermIndex() {
     if (cat.sectionImages) Object.keys(cat.sectionImages).forEach(sec => add(sec, { kind: "cat", catKey: cat.key, section: sec }));
   });
   (window.BBG_LEADERS || []).forEach(l => {
-    (l.entries || []).forEach(e => { if (/unique/i.test(e.type)) add(e.name, { kind: "leader", id: l.id }); });
+    /* Toutes les entrées (unités/bâtiments uniques ET capacités civ/leader)
+       pointent vers la fiche du leader. Les catégories ayant été ajoutées
+       avant, elles gardent la priorité en cas de nom identique. */
+    (l.entries || []).forEach(e => add(e.name, { kind: "leader", id: l.id }));
   });
   BBG_TERM_INDEX = idx;
   return idx;
 }
+/* Mots trop génériques (concepts de jeu / types de croyances) qui collisionnent
+   avec un nom d'entité et pollueraient la prose s'ils devenaient des liens. */
+const BBG_TERM_STOP = new Set([
+  "eureka", "culte", "fideles", "fondateur", "suiveur", "amplificateur",
+  "pantheon", "science", "culture", "foi", "or", "production", "religion"
+]);
+
+/* Cherche une entité BBG pour un terme en gras, en tolérant article de tête
+   et pluriel (français), sans jamais matcher un mot trop court/générique. */
+function bbgTermLookup(inner) {
+  const idx = bbgTermIndex();
+  const base = bbgTermNorm(inner);
+  if (base.length <= 2 || BBG_TERM_STOP.has(base)) return null;
+  if (idx[base]) return idx[base];
+  const noArt = base.replace(/^(les|le|la|un|une|des|du|de|d|l)\s+/, "");
+  if (noArt.length > 2 && noArt !== base && idx[noArt]) return idx[noArt];
+  const sing = noArt.replace(/([a-z]{3,})[sx]$/, "$1");
+  if (sing !== noArt && idx[sing]) return idx[sing];
+  return null;
+}
 function bbgTermLink(inner) {
-  const t = bbgTermIndex()[bbgTermNorm(inner)];
+  const t = bbgTermLookup(inner);
   if (!t) return null;
   const attr = t.kind === "leader"
     ? `data-tleader="${escAttr(t.id)}"`
