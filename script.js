@@ -1465,6 +1465,23 @@ const BBG_TERM_STOP = new Set([
   "pantheon", "science", "culture", "foi", "or", "production", "religion"
 ]);
 
+/* Alias EN -> FR : Hugo rédige certains termes en anglais (sources vidéo EN)
+   alors que l'encyclopédie BBG est en français. Valeurs déjà normalisées
+   (bbgTermNorm) pour matcher directement l'index. Table vérifiée contre la
+   data : chaque cible existe bien comme entité BBG. */
+const BBG_TERM_ALIASES = {
+  "earth goddess": "deesse de la terre",
+  "vertical integration": "integration verticale",
+  "oxford university": "universite d oxford",
+  "urban planning": "urbanisme",
+  "serfdom": "servage",
+  "venetian arsenal": "arsenal de venise",
+  "eagle warrior": "guerrier aigle",
+  "colonization": "colonisation",
+  "diggers": "digger",
+  "outback station": "elevage de l outback"
+};
+
 /* Cherche une entité BBG pour un terme en gras, en tolérant article de tête
    et pluriel (français), sans jamais matcher un mot trop court/générique. */
 function bbgTermLookup(inner) {
@@ -1476,6 +1493,8 @@ function bbgTermLookup(inner) {
   if (noArt.length > 2 && noArt !== base && idx[noArt]) return idx[noArt];
   const sing = noArt.replace(/([a-z]{3,})[sx]$/, "$1");
   if (sing !== noArt && idx[sing]) return idx[sing];
+  const alias = BBG_TERM_ALIASES[base] || BBG_TERM_ALIASES[noArt];
+  if (alias && idx[alias]) return idx[alias];
   return null;
 }
 function bbgTermLink(inner) {
