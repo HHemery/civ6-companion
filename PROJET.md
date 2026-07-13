@@ -36,6 +36,11 @@ civ6-companion/
   owner: <id PERSONNES>, img, couleur (accent hex), bonus, pantheon, victoire, early_game, mid_game,
   late_game, guerre_diplomatie?, snowball, pieges, notes }`. Chaque champ de contenu = string
   (paragraphe) ou tableau (liste à puces). `**gras**` supporté (mini-markdown maison, échappé XSS).
+  Les fiches d'Hugo/Nuage sont dans `script.js` ; **les contributions d'amis vont dans un fichier
+  isolé `data/civs/<id>.js`** qui fait `(window.CIV_FICHES=window.CIV_FICHES||[]).push({...})` (le
+  fichier peut aussi déclarer le profil de l'auteur via `window.EXTRA_PROFILS`). `script.js` les
+  fusionne dans `CIV_DATA`/les profils au chargement. **Pour ajouter une civ d'ami : suivre
+  `AJOUTER-SA-CIV.md` et copier `data/civs/_exemple.js` — NE PAS éditer `CIV_DATA` dans `script.js`.**
 - **`GUIDE_DATA[]`** — pages de guide : `{ id, titre, sousTitre, icon, sections: [{ titre, src?,
   blocs }] }`. Blocs typés : `{h4}`, `{p}`, `{ul: []}`, `{table: {head, rows}}`,
   `{tiers: [{label, color, items: [{nom, note, mine?}]}]}` (lignes de tier list). Page spéciale :

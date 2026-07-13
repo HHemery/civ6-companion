@@ -452,6 +452,16 @@ const CIV_DATA = [
   }
 ];
 
+/* Fiches ajoutées par les amis : un fichier par civ dans data/civs/<id>.js, qui
+   fait `(window.CIV_FICHES = window.CIV_FICHES || []).push({...})`. Chargés par
+   leur propre <script> AVANT celui-ci (voir index.html). On les fusionne ici, en
+   ignorant les id déjà présents. Voir AJOUTER-SA-CIV.md. */
+if (Array.isArray(window.CIV_FICHES)) {
+  for (const f of window.CIV_FICHES) {
+    if (f && f.id && !CIV_DATA.some(c => c.id === f.id)) CIV_DATA.push(f);
+  }
+}
+
 /* ==========================================================================
    GUIDE GÉNÉRAL + MÉTA
    Chaque page = { id, titre, sousTitre, icon, sections: [ { titre, src?, blocs } ] }
@@ -1383,8 +1393,15 @@ function profilNormalize(p) {
 }
 function profilsSeed() {
   const base = (Array.isArray(window.PROFILS) && window.PROFILS.length)
-    ? window.PROFILS
+    ? window.PROFILS.slice()
     : PERSONNES.map(p => ({ id: p.id, nom: p.nom, emoji: p.emoji }));
+  /* Profils déclarés par les fiches d'amis (data/civs/<id>.js via
+     window.EXTRA_PROFILS) : ajoutés s'ils n'existent pas déjà. */
+  if (Array.isArray(window.EXTRA_PROFILS)) {
+    for (const p of window.EXTRA_PROFILS) {
+      if (p && p.id && !base.some(b => b.id === p.id)) base.push(p);
+    }
+  }
   return base.map(profilNormalize);
 }
 function profilsLoadDraft() {
