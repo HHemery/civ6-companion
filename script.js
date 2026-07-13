@@ -1835,6 +1835,7 @@ function navEntries() {
         .map(g => ({ id: g.id, label: g.titre, sub: g.sousTitre, icon: g.icon || "🏆" })) }
   ];
   entries[1].items.push({ id: "backoffice", label: "Backoffice — profils", sub: "Gérer les profils & civs main", icon: "🛠️" });
+  entries[1].items.push({ id: "contribuer", label: "Ajouter ta civ", sub: "Le guide pour tes amis", icon: "🧑‍🤝‍🧑" });
   if (bbgHasData()) {
     const bbgItems = [];
     if (window.BBG_LEADERS) {
@@ -1957,6 +1958,7 @@ function select(id) {
   if (civ) renderCiv(civ);
   else if (page) renderGuide(page);
   else if (id === "backoffice") renderBackoffice();
+  else if (id === "contribuer") renderContribuer();
   else if (id && id.indexOf("bbg-") === 0) renderBbg(id);
   else { activeId = null; renderHome(); }
   renderNav($search.value);
@@ -2427,6 +2429,98 @@ function boBindList() {
   });
 }
 
+/* ---- Page « Ajouter ta civ » (guide contributeur pour les amis) ---- */
+
+const CONTRIB_PROMPT = [
+  'Tu travailles sur le repo "Civ Sheet" (une app web statique, zero build, file://).',
+  'Objectif : ajouter MA fiche de civilisation, dans UN SEUL nouveau fichier.',
+  '',
+  'Etapes :',
+  '1. Lis d\'abord PROJET.md (architecture + conventions) et data/civs/_exemple.js (le modele).',
+  '2. A partir de la transcription plus bas, cree data/civs/<mon-id>.js en COPIANT le',
+  '   format de _exemple.js. Remplis tous les champs (bonus, pantheon, victoire,',
+  '   early/mid/late_game, snowball, pieges) fidelement, recale sur la meta BBG. Ecris',
+  '   en francais, concis et actionnable, **gras** sur les termes cles (ils deviennent',
+  '   des liens vers l\'encyclopedie).',
+  '   - mon-id = mon pseudo + la civ, minuscules sans accent (ex. "leo-mongolie").',
+  '   - contexte = "FFA" ou "Teamer" (demande-moi si tu hesites).',
+  '   - owner = mon pseudo. Declare mon profil via window.EXTRA_PROFILS dans le meme',
+  '     fichier (garde le bloc en bas de _exemple.js) si je n\'existe pas encore.',
+  '3. Recupere le portrait du leader via l\'API du wiki Fandom (voir PROJET.md sec.2)',
+  '   et sauvegarde-le en img/<mon-id>.webp. Mets ce chemin dans le champ img.',
+  '4. Ajoute UNE ligne <script src="data/civs/<mon-id>.js?v=1"></script> dans index.html,',
+  '   juste AVANT la ligne <script src="script.js...">.',
+  '5. Lance `node tools/bump-cache.mjs` puis verifie `node --check` sur les 2 fichiers.',
+  '6. Commit, push sur mon fork, et ouvre une Pull Request vers HHemery/civ6-companion:main',
+  '   intitulee "Ajoute ma civ : <Leader> - <Civilisation>".',
+  'Ne touche a AUCUN autre fichier existant (a part la ligne <script> d\'index.html).',
+  '',
+  'Ma civ : <Leader> - <Civilisation>, contexte <FFA/Teamer>, pseudo <mon pseudo>.',
+  'Transcription :',
+  '<<< COLLE TA TRANSCRIPTION ICI >>>'
+].join('\n');
+
+function renderContribuer() {
+  $content.innerHTML = `
+    <div class="fiche-header"><div>
+      <h2>🧑‍🤝‍🧑 Ajouter ta civ</h2>
+      <span class="badge guide">Méta</span>
+    </div></div>
+    <p class="fiche-sub">Ton espace sur le site, avec ta civ et ton portrait — en ~10 min, et c'est <strong>ton propre Claude</strong> qui fait le boulot.</p>
+
+    <div class="section">
+      <h3>Comment ça marche</h3>
+      <p>Une civ = <strong>un seul fichier</strong> (<code>data/civs/&lt;ton-id&gt;.js</code>). Tu n'ajoutes qu'un fichier neuf : tu ne peux rien casser du site, et il suffit qu'Hugo clique <strong>Merge</strong> sur ta proposition.</p>
+    </div>
+
+    <div class="section">
+      <h3>Ce qu'il te faut</h3>
+      <ul>
+        <li>Un <strong>compte GitHub</strong> (gratuit).</li>
+        <li><strong>Claude Code</strong> installé (ou Claude sur le web, à défaut).</li>
+        <li>Une <strong>transcription YouTube</strong> d'un bon joueur sur ta civ (ou tes notes). Astuce : sur la vidéo, « … » → « Afficher la transcription », copie tout.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Les étapes</h3>
+      <h4>1. Fork le repo</h4>
+      <p>Va sur <strong>github.com/HHemery/civ6-companion</strong> et clique <strong>Fork</strong> (ça crée ta copie).</p>
+      <h4>2. Ouvre ta copie avec Claude Code</h4>
+      <p>Clone ton fork sur ton PC, puis ouvre le dossier avec Claude Code.</p>
+      <h4>3. Colle le prompt ci-dessous à ton Claude</h4>
+      <p>Remplace la fin par ta transcription. Ton Claude crée ta fiche, récupère ton portrait, et ouvre la <strong>Pull Request</strong> tout seul.</p>
+      <h4>4. Préviens Hugo</h4>
+      <p>Il merge ta PR. Ta civ (et ton espace « Je suis ») apparaît en ligne ~1 min après. 🎉</p>
+    </div>
+
+    <div class="bo-export-out">
+      <div class="bo-export-head">
+        <strong>📋 Le prompt à coller à ton Claude</strong>
+        <button class="bo-btn primary" id="contrib-copy">Copier</button>
+      </div>
+      <p class="bo-export-tip">Remplace <code>&lt;&lt;&lt; COLLE TA TRANSCRIPTION ICI &gt;&gt;&gt;</code> par ta transcription avant d'envoyer.</p>
+      <textarea class="bo-export-text" id="contrib-prompt" readonly spellcheck="false"></textarea>
+    </div>
+
+    <div class="section">
+      <h3>Sans Claude ?</h3>
+      <p>Copie <code>data/civs/_exemple.js</code> en <code>data/civs/&lt;ton-id&gt;.js</code>, remplis-le (il est commenté), mets ton portrait en <code>img/&lt;ton-id&gt;.webp</code>, ajoute la ligne <code>&lt;script&gt;</code> dans <code>index.html</code>, puis ouvre une PR. Détails complets dans <strong>AJOUTER-SA-CIV.md</strong> à la racine du repo.</p>
+    </div>`;
+
+  const ta = $content.querySelector("#contrib-prompt");
+  if (ta) ta.value = CONTRIB_PROMPT;
+  const btn = $content.querySelector("#contrib-copy");
+  if (btn) btn.addEventListener("click", () => {
+    const done = () => { btn.textContent = "Copié ✓"; setTimeout(() => { btn.textContent = "Copier"; }, 1500); };
+    const fallback = () => { try { ta.focus(); ta.select(); if (document.execCommand("copy")) done(); } catch (e) { /* ok */ } };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(CONTRIB_PROMPT).then(done, fallback);
+    } else { fallback(); }
+  });
+  scrollTop();
+}
+
 /* ---- Init ---- */
 
 $search.addEventListener("input", () => renderNav($search.value));
@@ -2460,7 +2554,7 @@ if ($me) {
 }
 
 const initial = location.hash.replace("#", "");
-if (initial && (CIV_DATA.some(c => c.id === initial) || GUIDE_DATA.some(g => g.id === initial) || initial === "backoffice" || (initial.indexOf("bbg-") === 0 && bbgHasData()))) {
+if (initial && (CIV_DATA.some(c => c.id === initial) || GUIDE_DATA.some(g => g.id === initial) || initial === "backoffice" || initial === "contribuer" || (initial.indexOf("bbg-") === 0 && bbgHasData()))) {
   select(initial);
 } else {
   renderNav("");

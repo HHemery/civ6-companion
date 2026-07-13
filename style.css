@@ -934,6 +934,15 @@ td:first-child { color: var(--gold-bright); }
   color: #cdd6f4; font-family: monospace; font-size: 0.8rem; line-height: 1.5;
 }
 
+code {
+  font-family: monospace;
+  font-size: 0.88em;
+  background: var(--panel-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+
 /* ---------------- Guides & références BBG ---------------- */
 
 .bbg-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 18px; }
