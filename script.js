@@ -1776,7 +1776,7 @@ function renderHome() {
       <h2>Civ Sheet</h2>
       <p class="intro">Mémo compétitif à garder à côté du jeu : guide général (réglages, early/mid/late,
       la boucle des gros rendements), tier list BBG 7.5, bilan des vidéos de tips, et l'espace de chaque
-      joueur avec ses civs. Tout est calé sur le multi BBG en online speed.</p>
+      joueur avec ses civs. Tout est calé sur le multi BBG.</p>
       <div class="home-section-title">Guides & méta — pour tout le monde</div>
       <div class="home-grid">${guideCards}</div>
       ${persSections}
