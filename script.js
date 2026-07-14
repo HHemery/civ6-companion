@@ -369,6 +369,15 @@ const CIV_DATA = [
       "Religion optionnelle : Herson l'a fondée avec **Zen Meditation** parce qu'il avait **La Valette** en suzeraineté (achats de bâtiments à la foi) — sinon la foi part en builders/Monumentality."
     ],
     victoire: "**Science** — par un chemin unique : les **bibliothèques crachent des eurekas gratuits**, les premiers districts offrent leurs bâtiments, les discounts font le reste. Herson à T46 : « impossibly large », villes à 12-14 pop, +5/+6 aménités. Perma-ban dans beaucoup de lobbies : profite tant qu'on te le laisse.",
+    rendements: [
+      "Repères tirés des **vraies parties** de Herson et Lege (online speed, FFA). Vise l'**ordre de grandeur** et surtout la **trajectoire**, pas le chiffre exact.",
+      "**➤ TON opening (Lege — plateformes commerciales → campus, profil « science ») :**",
+      "**~T44** : science **~+28/t**, culture ~+48/t, **or ~+55/t** (les plateformes paient déjà), foi quasi nulle (dépensée en builders), **~8 villes** encore petites (2-8 pop), Féodalité qui tombe, **+5 aménités**. À ce stade il est NORMAL que ta science soit basse — les eurekas ne sont pas encore lâchés.",
+      "**~T60** : **la science EXPLOSE à ~+185/t** (campus + bibliothèques + eurekas qui pleuvent), culture ~+85/t, **or ~+145/t**, **~10 villes** (les grosses à ~12 pop), **~400 de prod empire**. ⚠ Repère-clé : ta **science doit faire ~×6 entre T44 et T60**. Si elle n'a pas décollé vers T55-60, ton moteur biblio/eureka patine.",
+      "Avec l'opening Lege, **science > culture** (~+185 vs ~+85 à T60) — normal, tu n'es pas sur le build wide-culture.",
+      "**➤ Alternative (Herson — 2 lieux saints → wide, profil « culture ») :** empire plus large, culture > science. **T41** : sci +28 / cult +53. **T56** : sci +80 / cult +117. **T67** : **sci +198 / cult +227**, villes à 11-14 pop, +6 aménités, **or +305/t**. Même explosion de science entre T56 et T67.",
+      "**➤ Communs aux deux (les vrais marqueurs Babylone) :** **or massif** (Palgum + routes + tu ACHÈTES tes colons/builders au lieu de les produire) ; **foi tenue basse** (dépensée en continu via **Monumentality** — ne thésaurise jamais) ; **8 villes ~T44 → 10+ ~T60** ; pops qui gonflent à **12-16** en mid. Et surtout : ta **science/tour SOUS-ESTIME ton avance** — les eurekas des bibliothèques comptent autant que le chiffre affiché."
+    ],
     early_game: [
       "**Settle pour le Palgum** : rivière/eau douce avec un max de tuiles améliorables adjacentes (Lege décale sa capitale pour ça). Les jardins suspendus sont un bon BO sur land riche en rivières (Lege).",
       "**Ouverture 2 lieux saints** (Herson) : le 1er donne le **sanctuaire gratuit** → panthéon rapide sans God King → **Urban Planning direct**.",
@@ -1545,6 +1554,7 @@ const CIV_SECTIONS = [
   { key: "bonus",             label: "Bonus (leader · civ · uniques)" },
   { key: "pantheon",          label: "Panthéon & croyances" },
   { key: "victoire",          label: "Victoire visée" },
+  { key: "rendements",        label: "📊 Rendements à cibler (par tour)" },
   { key: "early_game",        label: "Early game" },
   { key: "mid_game",          label: "Mid game" },
   { key: "late_game",         label: "Late game" },
