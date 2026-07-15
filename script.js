@@ -427,10 +427,14 @@ const CIV_DATA = [
       "**Cavalerie Mandékalou** (unité unique médiévale, remplace le chevalier, à **Étriers**) : **+3 de force**, tes négociants terrestres à ≤4 cases **immunisés au pillage**, et **tuer une unité rapporte 50 % de sa force de base en or**."
     ],
     pantheon: [
-      "⚡ Tu démarres avec **+2 foi/tour** → tu es **quasi toujours premier au panthéon du monde**, ce qui vaut **+2 de score d'ère** (au lieu de 1). Herson : « **je dépasse largement mon âge d'or, comme toujours avec le Mali** » — religion + quartier unique posés dans l'ère antique, ça s'empile.",
-      "**Musique chorale** est LE pick si elle est libre : ta **culture est ton point faible**, et c'est exactement ce qui la répare. Herson ne l'a pas eue → il a ramé tout le game (« j'ai vraiment besoin de comprendre comment j'obtiens ma culture »).",
-      "Sinon selon le spawn : **panthéon des pâturages** (le pick de Herson sur un spawn bourré de pâturages) ou **Religious Settlements**.",
-      "⚠ **Earth Goddess a été nerfée** : plus de foi sur les centres-villes — désormais foi sur les cases **breathtaking/charming**, centres-villes exclus."
+      "⚡ Tu démarres avec **+2 foi/tour** → tu es **quasi toujours premier au panthéon du monde**, ce qui vaut **+2 de score d'ère** (au lieu de 1). Herson : « **je dépasse largement mon âge d'or, comme toujours avec le Mali** » — religion + quartier unique posés dans l'ère antique, ça s'empile. Fonder une religion est donc **acquis** : joue-la à fond.",
+      "**Panthéon** — peu déterminant, prends selon le spawn : **Dieu du ciel ouvert** (pâturages, le pick de Herson), **Colonies religieuses**, ou **Dame des roseaux et des marais** (rivières). ⚠ **Déesse de la terre a été nerfée** : plus de foi sur les centres-villes, désormais seulement sur les cases **breathtaking/charming**.",
+      "**Fondateur** → **Laïcat** (le pick de Herson) : tes **lieux saints** — tu en as partout — donnent **+2 foi**, et tes places du théâtre **+2 culture**. Alternative : **Pèlerinage** (**+2 foi** par ville convertie, **+3 à Théologie**) si tu veux maximiser le carburant d'achat.",
+      "**Suiveur n°1** → **Valeur travail** (Work Ethic) : autels **+2 production**, temples **+4 production**. C'est **le patch direct de ton -5 % de prod**, et tu as des lieux saints partout — avec **+15 % de production dessus** grâce à Marchands du Sahel. Herson lui-même, quand le malus est actif : « **ça aurait peut-être dû être Valeur travail, vu que j'ai de nouveau le malus de prod** ».",
+      "**Suiveur n°2** (via apôtre → « Évangéliser une croyance ») → **Éducation jésuite** : permet d'acheter les bâtiments de **Campus et de Place du théâtre à la foi**, **et les réduit de 15 %** — ça **s'empile** avec les **-20 % de la Suguba** et la réduction de **Théocratie**. Ça règle **tes deux faiblesses d'un coup** : la **culture** (amphithéâtres, musées) et la **falaise post-Free-Inquiry** (bibliothèques, universités).",
+      "Si **Chorale** (Musique chorale) est libre → **prends-la** : autels **+2 culture**, temples **+4 culture**, ton talon d'Achille réparé — et ça libère ta dédicace classique. ⚠ Dans **les deux parties de Herson elle était déjà prise** : planifie en supposant que tu ne l'auras pas.",
+      "**Culte** → **Dar-e Mehr** (Foi +3, **Culture +3**) pour re-patcher la culture. Sinon **Wat** (Foi +3, **Science +3** — celui que Herson voulait, pris avant lui) ou **Stupa** (Foi +3, **+1 aménité**) si tu peines à tenir **+5 aménités** (ecstatic = **+16 % sur TOUT**).",
+      "**Propagateur** : secondaire, tu ne spread pas. Herson n'évangélise que pour débloquer ses slots de croyance."
     ],
     victoire: "**Science** — mais par un chemin unique : ta science ne vient PAS de tes campus, elle vient de **Free Inquiry** (dédicace d'âge d'or : science = adjacence de tes plateformes). Avec des Sugubas à **+8/+10** d'adjacence (grâce aux lieux saints collés), c'est énorme. Herson : « **le Mali est très fort dans les lobbies à peu de cités-états bleues**, précisément à cause de l'abus de Free Inquiry ». ⚠ Corollaire : quand Free Inquiry s'arrête, « **ma science va être démasquée comme une fraude** » — prépare campus/universités AVANT.",
     rendements: [
@@ -449,6 +453,10 @@ const CIV_DATA = [
       "Rush **Currency** pour les Sugubas. Puis **achète** tes builders/colons (or ET foi) — avec -5 % de prod, **tu achètes, tu ne produis pas**."
     ],
     mid_game: [
+      "🏅 **Dédicaces d'âge d'or — la vraie question, c'est où va ta foi.** Le Mali a **deux monnaies** : ton **or** (énorme) achète tes **colons/builders** — déjà à **-20 %** dans une ville à Suguba ; ta **foi** achète tes **bâtiments**. D'où le verdict de Herson : « **on ne prend pas Monumentalité avec le Mali** » — elle convertit la foi en civils, **alors que ton or fait déjà ce boulot**.",
+      "**Classique → Pen, Brush and Voice** (culture) : ta foi reste libre pour les bâtiments. Herson : « ce n'est vraiment pas une partie à Monumentality — **PBV aurait tapé plus fort, et j'aurais juste dépensé toute ma foi en marchés** ». Monumentalité n'est bonne **que si tu as chopé Chorale** (« si j'avais eu Musique chorale, Monumentality serait super ») **et** qu'il te reste de la terre à prendre.",
+      "**Médiéval+ → Free Inquiry.** Surtout pas avant : elle donne de la science **égale à l'adjacence de tes plateformes**, or au classique tes Sugubas ne sont ni posées ni grosses. Vise à la faire chevaucher le pic **Génie civil**.",
+      "ℹ️ **Monumentalité est une dédicace** (temporaire, 1 ère) et **Éducation jésuite une croyance** (permanente) : elles ne se disputent **pas un slot**, seulement ton **budget de foi** pendant la fenêtre classique. Si ta foi déborde vraiment, les deux passent ; sinon tranche. ⚠ Monumentalité est nulle à foi basse (« ça ne fait pas plaisir d'être en Monumentality avec seulement **26 de foi** »).",
       "**Free Inquiry = ton moteur science.** Regarde tes adjacences de Suguba : +10, +9, +8… chacune devient de la science.",
       "**Génie civil = spike énorme** : la carte d'adjacence des plateformes passe en **×2** (patch récent) → science qui explose.",
       "**Théocratie** : sa réduction d'achat à la foi **s'empile additivement** avec les -20 % de la Suguba → Herson : « **chaque réduction que tu obtiens vaut plus que la précédente** ».",
@@ -489,9 +497,12 @@ const CIV_DATA = [
       "**Marchands du Sahel** : +1 route par banque → plus de routes = plus de carburant pour le combo ci-dessous."
     ],
     pantheon: [
-      "**Earth Goddess** (le pick de Herson en 2v2) ou **Religious Settlements**.",
-      "Croyances : **Sacred Places**, **Feed the World**. **Musique chorale** si libre (ta culture reste faible).",
-      "Comme en FFA : **premier panthéon du monde quasi garanti** (+2 score d'ère) → âge d'or facile."
+      "Comme en FFA : **premier panthéon du monde quasi garanti** (+2 de score d'ère) → âge d'or facile. **Panthéon** : **Déesse de la terre** (le pick de Herson en 2v2) ou **Colonies religieuses**.",
+      "🔑 **En teamer, la question n'est pas « quelle croyance est la meilleure » mais « comment j'écoule la foi de l'alliance ».** Le combo ne vaut que si tu peux réellement dépenser les **+4 foi par route entrante**. C'est exactement là que le Mali brille.",
+      "**Suiveur n°1** → **Valeur travail** : autels **+2 production**, temples **+4 production** → patche ton **-5 % de prod**, bien actif dans cette version. Herson avait pris **Nourrir le monde** et le regrette en post-game : « **ça aurait peut-être dû être Valeur travail, vu que j'ai de nouveau le malus de prod** ».",
+      "**Suiveur n°2** (apôtre → « Évangéliser une croyance ») → **Éducation jésuite** : achat des bâtiments de **Campus / Place du théâtre à la foi**, **-15 %**, qui **s'empile** avec les **-20 % de la Suguba** et **Théocratie**. C'est **le meilleur exutoire à la foi de l'alliance** : tu convertis la foi de ton allié en infrastructure science ET culture.",
+      "**Fondateur** → **Lieux sacrés** (le pick de Herson en 2v2) : **+2 or, +2 science, +2 culture et +2 foi** par ville convertie **dotée d'une merveille mondiale** — solide si tu empiles les merveilles. Sinon **Laïcat** (+2 foi par lieu saint) ou **Pèlerinage** (+2 foi/ville, +3 à Théologie) pour nourrir encore le moteur.",
+      "**Culte** → **Dar-e Mehr** (Foi +3, **Culture +3**) ou **Stupa** (Foi +3, **+1 aménité**). Les aménités comptent **double** ici : **+5 aménités = ecstatic = +16 % de foi**, et ce +16 % **double-dippe** avec la promo de Moksha (cf. mid game)."
     ],
     victoire: "**Tu ne gagnes pas — tu fais gagner.** Ton rôle est **back-line** : générer or/foi, **acheter pour l'équipe à -20 %**, et alimenter ton front-line. Herson joue back-line **3 games sur 4**.",
     rendements: [
