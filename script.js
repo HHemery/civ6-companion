@@ -413,6 +413,125 @@ const CIV_DATA = [
   },
 
   {
+    id: "mansa-musa",
+    leader: "Mansa Moussa",
+    civilization: "Mali",
+    contexte: "FFA",
+    owner: "hugo",
+    img: "img/mansa-musa.webp",
+    couleur: "#d4a017",
+    bonus: [
+      "**Chants des djélis (capacité civ)** — sur les cases de **désert** : **+2 foi** sur les centres-villes (ta **capitale l'a quelle que soit sa case**, dès **Commerce à l'étranger**), **+2 nourriture**, **+2 or sur les mines**, et tu peux y poser des **fermes**. Tu peux acheter les bâtiments de la **Suguba** à la **foi**. ⚠ **-5 % de production**. Bias de spawn : désert.",
+      "**Marchands du Sahel (capacité leader)** : **+1 capacité de route commerciale par banque** ; **+15 % de production** sur les lieux saints et leurs bâtiments ; et surtout les **Sugubas reçoivent une adjacence MAJEURE (au lieu de standard) des lieux saints** — c'est le cœur du kit.",
+      "**Suguba** (quartier unique, remplace la plateforme commerciale) : **+1 or** par lieu saint / rivière / oasis / centre-ville adjacent, et **unités, quartiers et bâtiments de cette ville 20 % moins chers à l'achat (or ET foi)**.",
+      "**Cavalerie Mandékalou** (unité unique médiévale, remplace le chevalier, à **Étriers**) : **+3 de force**, tes négociants terrestres à ≤4 cases **immunisés au pillage**, et **tuer une unité rapporte 50 % de sa force de base en or**."
+    ],
+    pantheon: [
+      "⚡ Tu démarres avec **+2 foi/tour** → tu es **quasi toujours premier au panthéon du monde**, ce qui vaut **+2 de score d'ère** (au lieu de 1). Herson : « **je dépasse largement mon âge d'or, comme toujours avec le Mali** » — religion + quartier unique posés dans l'ère antique, ça s'empile.",
+      "**Musique chorale** est LE pick si elle est libre : ta **culture est ton point faible**, et c'est exactement ce qui la répare. Herson ne l'a pas eue → il a ramé tout le game (« j'ai vraiment besoin de comprendre comment j'obtiens ma culture »).",
+      "Sinon selon le spawn : **panthéon des pâturages** (le pick de Herson sur un spawn bourré de pâturages) ou **Religious Settlements**.",
+      "⚠ **Earth Goddess a été nerfée** : plus de foi sur les centres-villes — désormais foi sur les cases **breathtaking/charming**, centres-villes exclus."
+    ],
+    victoire: "**Science** — mais par un chemin unique : ta science ne vient PAS de tes campus, elle vient de **Free Inquiry** (dédicace d'âge d'or : science = adjacence de tes plateformes). Avec des Sugubas à **+8/+10** d'adjacence (grâce aux lieux saints collés), c'est énorme. Herson : « **le Mali est très fort dans les lobbies à peu de cités-états bleues**, précisément à cause de l'abus de Free Inquiry ». ⚠ Corollaire : quand Free Inquiry s'arrête, « **ma science va être démasquée comme une fraude** » — prépare campus/universités AVANT.",
+    rendements: [
+      "Repères tirés de la **partie FFA de Herson** (screenshots). Vise l'ordre de grandeur et la **trajectoire**.",
+      "**~T46** (Féodalité tout juste finie) : science **~+27/t**, culture ~+40/t, **foi 157 (+39/t)**, **or 405 (+61/t)**. Ta science est basse et c'est NORMAL — Free Inquiry n'est pas encore branché. Ton or, lui, est déjà énorme.",
+      "**~T60** : **science ~+158/t** 💥, culture ~+100/t, foi ~+133/t, **or +201/t**. Repère-clé : **ta science fait ~×6 entre T46 et T60** (Free Inquiry + adjacences).",
+      "Plus tard, **Génie civil double la carte d'adjacence des plateformes** → Herson monte à **357 de science**. C'est le vrai pic.",
+      "Marqueur permanent : **ton or/foi doivent écraser le lobby dès T45** (405 d'or en stock à T46). Si ton or n'explose pas, ton Mali est raté."
+    ],
+    early_game: [
+      "**Settle sur le désert**, en cherchant rivières/oasis (adjacence Suguba) et des cases plates pour **Petra** et les **Pyramides**.",
+      "**Lieu saint d'abord, Suguba collée ensuite** — les lieux saints donnent une adjacence **majeure** à la Suguba. Herson : « la meta Mali, c'est **lieux saints → plateformes** ». Vise une Suguba touchant **2-3 lieux saints** (+10).",
+      "⚠ Il te faut **Mining** pour pouvoir poser la Suguba — Herson s'est fait bloquer un tour dessus.",
+      "**Moksha dans la capitale = l'opener classique.** Herson est parti sur **Liang** à la place et l'a regretté tout le game (« Liang était la plus grosse erreur, je n'aurais pas dû faire le malin, j'aurais dû prendre Moksha »).",
+      "**Petra est quasi obligatoire** : « si je rate Petra, quelque chose ne va vraiment pas — **aucun joueur ne devrait rusher Petra aussi tôt, sauf le Mali** ». Les **Pyramides** aussi (il les a ratées, prises T37).",
+      "Rush **Currency** pour les Sugubas. Puis **achète** tes builders/colons (or ET foi) — avec -5 % de prod, **tu achètes, tu ne produis pas**."
+    ],
+    mid_game: [
+      "**Free Inquiry = ton moteur science.** Regarde tes adjacences de Suguba : +10, +9, +8… chacune devient de la science.",
+      "**Génie civil = spike énorme** : la carte d'adjacence des plateformes passe en **×2** (patch récent) → science qui explose.",
+      "**Théocratie** : sa réduction d'achat à la foi **s'empile additivement** avec les -20 % de la Suguba → Herson : « **chaque réduction que tu obtiens vaut plus que la précédente** ».",
+      "**La Valette** en suzeraineté = achète les bâtiments de **centre-ville ET d'encampement** à la foi. **Chapelle du grand maître** = achète tes unités à la foi.",
+      "**Achète TOUT à la foi** : marchés, banques, universités, ateliers. « Ce n'est pas que les marchés — **tu peux tout acheter à la foi** ».",
+      "Merveilles : **Grande Zimbabwe** (+2 capacité de route), **Université de Sankoré** — **mets-la dans ta CAPITALE** (+2 science par route entrante ; Herson l'a mise ailleurs et l'a regretté), **Hagia Sophia**.",
+      "Aménités : vise **+5** (ecstatic = +16 % sur TOUT). Astuce Herson : **achète des scouts/archers à la foi** en garnison — aménités + eurekas d'un coup (3 archers = un eureka), et les scouts ne coûtent pas d'entretien."
+    ],
+    late_game: [
+      "⚠ **Quand Free Inquiry tombe, ta science s'effondre** si tu n'as pas de campus/universités derrière. Construis-les AVANT la fin de l'âge d'or.",
+      "La **Cavalerie Mandékalou** protège tes négociants du pillage et **s'autofinance** (50 % de la force de base de la cible en or par kill).",
+      "Tu paies tout moins cher que le lobby : convertis cet avantage en tempo (bâtiments achetés instantanément là où les autres produisent 6 tours)."
+    ],
+    snowball: "Désert (+2 foi / +2 food) → **panthéon en premier du monde** (+2 score d'ère) → **âge d'or quasi garanti** → **Free Inquiry** convertit l'adjacence de tes Sugubas (rendue **majeure** par tes lieux saints) en science → **or et foi massifs** → tu **achètes** ce que les autres produisent, à **-20 %** (Suguba) puis **-x % supplémentaires** (Théocratie, additif) → **tu joues avec une économie parallèle** pendant que le lobby construit.",
+    pieges: [
+      "**La culture est ton talon d'Achille.** Sans **Musique chorale** ni **Moksha**, tu rames tout le game (le vécu de Herson). Ne fais pas le malin sur le gouverneur.",
+      "Faire de **Free Inquiry ta seule science** : elle s'arrête, et tu es « démasqué comme une fraude ». Campus/universités AVANT.",
+      "Oublier le **-5 % de production** (revenu en 7.5) : tu es un civ d'**achat**, pas de production.",
+      "**Aménités négatives en early** (Herson en a souffert longtemps) : République classique, Sugubas, garnisons achetées à la foi.",
+      "Poser une **Suguba sans lieu saint collé** = tu jettes l'adjacence majeure, donc ton or ET ta science.",
+      "Rater **Petra** : c'est LA merveille que tu es le seul à pouvoir rusher aussi tôt."
+    ],
+    notes: "**Sources** : Herson (partie FFA chapitrée) + Malm (FFA FR). ⚠ **ATTENTION VERSION** : la partie de Herson est jouée sur la **beta BBG 7.3, où le malus de production du Mali avait été RETIRÉ** (il dit lui-même « nouveau Mali broken… peut-être que le civ est juste surtuné »). En **BBG 7.5, le -5 % de production est revenu** — Herson le confirme dans sa partie 2v2 : « ils ont remis le -5 % de prod ». Le plan tient tel quel, sois simplement **encore plus dépendant de l'achat**. Contexte : le Mali était **injouable en FFA** pendant des années (équilibré pour le 4v4) — ces buffs l'ont enfin rendu viable."
+  },
+
+  {
+    id: "mansa-musa-teamer",
+    leader: "Mansa Moussa",
+    civilization: "Mali",
+    contexte: "Teamer",
+    owner: "hugo",
+    img: "img/mansa-musa.webp",
+    couleur: "#d4a017",
+    bonus: [
+      "Même kit qu'en FFA (voir la fiche FFA) — mais **deux lignes changent tout en teamer** :",
+      "**Suguba : -20 % sur TOUT achat (or ET foi) dans la ville.** En équipe, ça veut dire que **c'est TOI qui dois acheter pour tout le monde**. Herson à son teammate : « **si l'un de nous deux peut acheter cette unité, c'est mieux que ce soit moi — j'ai 20 % de réduction sur tout achat à l'or dans la ville** ».",
+      "**Or d'early massif** : c'est LA raison historique. Le Mali a été **perma-ban en teamer pendant des années** parce qu'il pouvait **funnel son or d'early aux teammates** pour les propulser. Le BBG a fini par abandonner l'idée de l'équilibrer pour le teamer et l'a buffé pour les autres formats.",
+      "**Marchands du Sahel** : +1 route par banque → plus de routes = plus de carburant pour le combo ci-dessous."
+    ],
+    pantheon: [
+      "**Earth Goddess** (le pick de Herson en 2v2) ou **Religious Settlements**.",
+      "Croyances : **Sacred Places**, **Feed the World**. **Musique chorale** si libre (ta culture reste faible).",
+      "Comme en FFA : **premier panthéon du monde quasi garanti** (+2 score d'ère) → âge d'or facile."
+    ],
+    victoire: "**Tu ne gagnes pas — tu fais gagner.** Ton rôle est **back-line** : générer or/foi, **acheter pour l'équipe à -20 %**, et alimenter ton front-line. Herson joue back-line **3 games sur 4**.",
+    rendements: [
+      "Repères tirés de la **partie 2v2 de Herson** (screenshots) — noter la **foi bien plus haute qu'en FFA** grâce à l'alliance religieuse.",
+      "**~T39** : science ~+25/t, culture ~+37/t, **foi 243 (+82/t)** ⚡, or 192 (+34/t).",
+      "**~T59** : **science ~+190/t**, **culture ~+141/t**, **foi 422 (+276/t)**, or 342 (+202/t).",
+      "**Compare au FFA** : à tour égal, ta **foi est ~2× plus haute** et ta **culture ~+40 % plus haute** — c'est exactement l'alliance religieuse + Moksha qui travaille.",
+      "Herson en fin de partie : **150 de foi dans sa seule capitale → 106 culture/t + 74 science/t rien que sur cette ville**."
+    ],
+    early_game: [
+      "**Le combo de la fiche : ALLIANCE RELIGIEUSE + MOKSHA.** Herson : « les alliances religieuses ne sont presque jamais utilisées — **je pense que les gens dorment dessus** ».",
+      "Rappel des alliances en BBG (par route commerciale entre alliés) : **militaire +5 force (BANNIE en 2v2)**, recherche **+2 science**, culturelle **+2 culture**, économique **+6 or +1 prod**, **religieuse +4 foi +1 nourriture**.",
+      "**Les DEUX joueurs prennent Moksha dans leur capitale**, avec la promotion qui **convertit 20 % de la foi de la ville en science ET en culture**.",
+      "**Les DEUX envoient toutes leurs routes commerciales vers la capitale-Moksha de l'allié.** Chaque négociant rapporte alors au receveur **4 foi + 1 nourriture + ~0,8 science + ~0,8 culture**.",
+      "Ouverture : **lieu saint → Suguba** (comme en FFA), en anticipant un jeu passif si les spawns sont éloignés."
+    ],
+    mid_game: [
+      "**Empile les multiplicateurs de foi AVANT Moksha** (la foi de la ville est calculée d'abord, la promo s'applique ensuite) : **Kotoku-in** (+20 % foi), **ecstatic** (5+ aménités, +16 %), **Kilwa Kisiwani** avec 2 cités-états blanches (+30 %).",
+      "🔥 **Le double-dip** : le +16 % d'aménités s'applique **deux fois** — la foi est multipliée, puis la science/culture issue de la promo Moksha est **re-multipliée** par les aménités. On passe de ~0,8 à **~1,25 science ET culture par négociant**.",
+      "**Choix des civs** : front-line idéal = **Scythie** (en BBG elle achète **toute sa cavalerie à la foi** → elle dépense la foi sans même fonder de religion, et son spawn chevaux + son amélioration unique empilent la foi dans sa capitale). Back-line = **Mali** (les -20 % d'achat) ou **Éthiopie** (convertit encore plus de foi en science/culture).",
+      "**Tu es la banque** : tes alliés t'envoient l'or, **tu achètes** (unités, tuiles, bâtiments) — toujours dans une ville avec Suguba.",
+      "**Université de Sankoré dans la CAPITALE** : +2 science par route entrante, et c'est là que tes alliés envoient leurs négociants. Herson l'a mise dans sa B2 et l'a regretté (« ça aurait été bien mieux dans la capitale, c'est là que j'envoie mes négociants »)."
+    ],
+    late_game: [
+      "Ton front-line convertit ton or/foi en pression militaire. Herson : contre un adversaire agressif, quelques **pré-builds de chars lourds à upgrader** suffisent à te rendre intouchable sans dépenser grand-chose.",
+      "Idée gagnante de la game : plutôt que de doubler sur le front-line adverse, **allez taper leur back-line directement** (avec un chemin de fer pour la logistique).",
+      "**Âge héroïque** : Herson double son adjacence de campus (+25 → +50 de prod converti) et cumule +15 % prod militaire — l'âge d'or teamer est énorme."
+    ],
+    snowball: "Alliance religieuse (**+4 foi par route**) → **Moksha convertit 20 % de ta foi en science ET culture** → tu empiles les **multiplicateurs de foi** (Kotoku-in, ecstatic, Kilwa) qui **double-dippent** avec la promo → ta capitale seule crache **~106 culture et ~74 science** → et la foi restante, tu la dépenses à **-20 %** (Suguba) pour **acheter pour toute l'équipe**. Tu es à la fois la banque, le générateur de stats et le fournisseur.",
+    guerre_diplomatie: "**Alliance militaire = bannie en 2v2** (trop forte). Tu es back-line : tu ne cherches pas le combat, tu **finances** celui de ton front-line. Attends-toi à être attaqué si ton settle t'expose (Herson : « je vais me faire attaquer à 1 million % plus tard dans la partie »). Quelques pré-builds à upgrader suffisent à décourager.",
+    pieges: [
+      "**Pas assez de quartiers** : les monuments ne rendent rien sans quartier dans la ville. Reproche encaissé par Herson en post-game : « **3,4 d'adjacence de plateforme avec 8 villes, ça ne sonne pas comme assez de quartiers** ».",
+      "**Université de Sankoré hors capitale** = tu perds l'essentiel de sa valeur (les routes de ton allié arrivent dans ta cap).",
+      "Ne pas dépenser ta foi : le combo ne vaut que si **les deux joueurs peuvent réellement dépenser** la foi de l'alliance. C'est pour ça que Scythie (achat cavalerie à la foi) et Mali (-20 %) sont les bons picks.",
+      "Oublier que **tu dois être l'acheteur** de l'équipe : chaque achat fait par ton allié plutôt que par toi coûte 20 % de plus."
+    ],
+    notes: "**Source** : Herson, partie **2v2** chapitrée (stratégie « alliance religieuse » théorisée avec son frère) + partie **4v4 de Malm**. Le 2v2 et le 4v4 se ressemblent assez pour partager cette fiche. ⚠ Dans cette partie, le **-5 % de production du Mali est bien actif** (« ils ont remis le -5 % de prod ») — c'est donc la version **la plus proche du BBG 7.5 actuel**. Note de contexte : PPL autorise à passer le climat en **hot** si tu prends le Mali (sinon spawns désert catastrophiques)."
+  },
+
+  {
     id: "pachacuti",
     leader: "Pachacuti",
     civilization: "Inca",
